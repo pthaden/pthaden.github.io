@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Using the ABCS Custom Code Component to Get and Set Data &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Using the ABCS Custom Code Component to Get and Set Data ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2016/09/17/custom-code-components-in-abcs/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Using the ABCS Custom Code Component to Get and Set Data "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2016/09/17/custom-code-components-in-abcs/"/>
+    
+    
+    <meta property="og:description" content="Hacking around with the ABCS JavaScript API"/>
+    <meta name="description" content="Hacking around with the ABCS JavaScript API"/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2016-17-September" title="September 17, 2016">September 17, 2016</time>
+            </div>
+            <h1 class="title">Using the ABCS Custom Code Component to Get and Set Data</h1>
+            </header>
+
+        <section>
+            <p>Application Builder Cloud Service (ABCS) is one of the newest “Citizen Developer” tools from Oracle. The idea is that normal folks can create apps by dropping components onto a canvas and tweaking property inspectors, and thus create departmental apps and connect them to SaaS systems. I’ve heard it described as the “democratization of enterprise application development” – power to the people!</p>
+
+<p>However, ABCS is a young product and some of the use cases are still being fleshed out. You might find you need to do something beyond what the standard components can do. That’s when the Custom Code component comes in handy.</p>
+
+<div class="full"><img src="/images/20160917/custom-code-widget.png" /></div>
+
+<p>Here’s an example where custom code let us leverage a combobox to not only lookup an entry in a LOV table, but also populate more than one field’s data based on the user’s combobox choice:</p>
+
+<p>We had a requirement to store part numbers, descriptions and list prices in a “catalog” business component which would be used as a lookup table. In another part of the app we wanted to create order lines and use a combobox link to the catalog table to populate default values for the ordered items.</p>
+
+<p>The problem we ran into is that a combobox field is a foreign key reference field and it only populates one field in a business component. There isn’t a way to “pull” data back into multiple fields. But we wanted the combobox to fill in not just the item number for an order line, but also the list price. Using the standard combobox component it would only fill in the item description.</p>
+
+<div class="full"><img src="/images/20160917/combobox-only-pulls-lookup-data-into-one-field.png" /></div>
+
+<p>In the screenshot above, the only field that gets updated by a combobox selection is the catalog item itself. Behind the scenes the business object gets populated with a foreign key ID for the lookup table, and the UI gets populated with the description. But we wanted to populate the Price field in the screenshot above, too.</p>
+
+<h2 id="custom-code-to-the-rescue">Custom Code to the rescue!</h2>
+
+<p>The Custom Code component can accomplish what we want to do, but fair warning: you’re leaving the “citizen developer” world behind when you drop this tool onto your canvas. </p>
+
+<p>When you drag one of these from the palette, you get a property inspector that reflects ABCS’ Oracle JET heritage, steeped in it’s own Knockout.js MVVM architecture. There’s not a lot of documentation yet on how to modify a custom code component, either in the <a href="https://docs.oracle.com/cloud/latest/appbuilder/CSAPB/GUID-3DEB084C-4010-4D56-95B9-0FA8F428A704.htm#GUID-D86609A5-438E-4AEA-8137-0E10EE872617">Using ABCS guide</a> or the <a href="https://docs.oracle.com/cloud/latest/appbuilder/ABCSA/">JavaScript API Reference</a>.</p>
+
+<div class="full"><img src="/images/20160917/custom-code-looks-like-jet-viewmodel.png" /></div>
+
+<p>Thanks to my colleague David Konecny I was able to learn some tricks about the Custom Component and how to use it to manipulate the data models behind an ABCS page.</p>
+
+<h2 id="consolelog-all-the-things">console.log() all the things</h2>
+
+<p>One trick that was useful was to get insight into what models were already available in the standard custom component code. You’ll see in the default code that a custom component gets its own viewmodel called <code>CustomComponentViewModel</code> and that ABCS passes in two parameters: <code>params</code> and <code>componentInfo</code>. So I started by console.log-ing all of these objects out and taking a look at them in the browser console while previewing the ABCS page.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+
+<span class="kd">var</span> <span class="nx">CustomComponentViewModel</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="nx">componentInfo</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">AbcsLib</span><span class="p">.</span><span class="nx">checkThis</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">params</span> <span class="o">=</span> <span class="nx">params</span><span class="p">;</span>
+
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;self&#39;</span><span class="p">,</span> <span class="nx">self</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;this&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;params&#39;</span><span class="p">,</span> <span class="nx">params</span><span class="p">);</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;componentInfo&#39;</span><span class="p">,</span> <span class="nx">componentInfo</span><span class="p">);</span>
+  
+  <span class="c1">//the page view model</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">pageViewModel</span> <span class="o">=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">root</span><span class="p">;</span>
+
+<span class="p">...</span></code></pre></div>
+
+<div class="full zoomable"><img src="/images/20160917/console_logging.png" /></div>
+
+<p>Notice that the standard component code makes some convenience variable assignments that the component’s viewModel can access, such as with the line <code>this.pageViewModel = params.root;</code>. This lets you access all of the page’s backing data objects (not just for the viewModel for your custom component).</p>
+
+<p>With liberal use of <code>debugger;</code> statements and more console.logging, you can discover things like Knockout observables for each of the fields on your page. Remember that observables can get a value you want to read, but they can also set a value you want to change.</p>
+
+<p>This was the key for populating more than one field with data from the lookup table: if I could get the right price that matched the item selected in the combobox, I could use the page’s observables to push it into the right field with code like this:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">pageViewModel</span><span class="p">;</span>
+
+<span class="nx">model</span><span class="p">.</span><span class="nx">Observables</span><span class="p">.</span><span class="nx">Order_Line_ItemsEntityDetailArchetype</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">Price_2</span><span class="p">(</span><span class="nx">price</span><span class="p">);</span></code></pre></div>
+
+<p>(here, <code>Price_2</code> is the name of the field in my order lines business object that I want to set, and <code>price</code> is a JavaScript var that holds the looked-up list item price that I’ll retrieve with code coming up, below)</p>
+
+<h2 id="how-to-use-the-combobox-to-access-the-lookup-table">How to use the combobox to access the lookup table</h2>
+
+<p>Since a ABCS page form is bound to a single business object, I didn’t have a direct handle to the lookup table while creating a new order line record. But I could ask the combobox to tell me what the lookup table values were.</p>
+
+<p>David pointed me to the trick to get ahold of the correct price out of the lookup table, leveraging the current page’s combobox value to get the matching price.</p>
+
+<p>Here’s David’s code:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">selectedCatalogueRecord</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">Archetypes</span><span class="p">.</span><span class="nx">Order_Line_ItemsEntityDetailArchetype</span><span class="p">.</span><span class="nx">getObservables</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="s1">&#39;ref2Catalog&#39;</span><span class="p">].</span><span class="nx">getSelectedRecord</span><span class="p">();</span>
+
+<span class="kd">var</span> <span class="nx">price</span> <span class="o">=</span> <span class="nx">selectedCatalogueRecord</span><span class="p">[</span><span class="s1">&#39;Price&#39;</span><span class="p">];</span></code></pre></div>
+
+<p>(here, <code>ref2Catalog</code> is the name of my combobox field in the order lines business object, and <code>Price</code> is the list price column in my catalog lookup table)</p>
+
+<p>So this code works great if it runs after the combobox has selected a value. We hooked it up to a button we called <code>Manually Lookup Price</code> to test. It would ask the combobox for its selected record and get the right price. Then with the code from earlier we pushed the right price into the order line business object’s Price_2 observable, and it updated the record just like we wanted.</p>
+
+<h2 id="listening-for-changes-to-the-combobox">Listening for changes to the combobox</h2>
+
+<p>The last piece of the puzzle involved making the lookup automatic. We didn’t want to press a button to Manually Lookup Price every time; we wanted the user’s action of changing the combobox to fire an event we could intercept to run our code.</p>
+
+<p>Getting a handle to the combobox’s change event was tricky. At first I was tempted to just use jQuery to grab ahold of it in the view, but that just seemed wrong to cross over into the UI to hook the data change event.</p>
+
+<p>Again David helped me with getting the combobox’s <code>.item['ref2Catalog'].currentObject</code> handle and then setting up a callback to run our code with a <code>subscribe()</code> function.</p>
+
+<p>Here’s the entirety of the code that we added to the <code>CustomComponentViewModel</code> function to pull back lookup data and push it into multiple fields in our order lines business object:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<span class="c1">//assign pageViewModel to model for convenience</span>
+<span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">pageViewModel</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;pageViewModel&#39;</span><span class="p">,</span> <span class="nx">model</span><span class="p">);</span>
+
+<span class="c1">//get array of all observables, then select the &#39;ref2Catalog&#39; field by name </span>
+<span class="c1">//so we can subscribe to change events, such as when a user picks a new value with the combobox</span>
+<span class="nx">model</span><span class="p">.</span><span class="nx">Archetypes</span><span class="p">.</span><span class="nx">Order_Line_ItemsEntityDetailArchetype</span><span class="p">.</span><span class="nx">getObservables</span><span class="p">()</span>
+  <span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="s1">&#39;ref2Catalog&#39;</span><span class="p">]</span>
+  <span class="p">.</span><span class="nx">currentObject</span>
+  <span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">//use the combobox item to retrieve the entire selected record from the lookup table</span>
+    <span class="kd">var</span> <span class="nx">selectedCatalogueRecord</span> <span class="o">=</span> <span class="nx">model</span><span class="p">.</span><span class="nx">Archetypes</span><span class="p">.</span><span class="nx">Order_Line_ItemsEntityDetailArchetype</span><span class="p">.</span><span class="nx">getObservables</span><span class="p">()</span>
+	  <span class="p">.</span><span class="nx">item</span><span class="p">[</span><span class="s1">&#39;ref2Catalog&#39;</span><span class="p">]</span>
+	  <span class="p">.</span><span class="nx">getSelectedRecord</span><span class="p">();</span>
+  		
+  	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;selectedCatalogueRecord&#39;</span><span class="p">,</span> <span class="nx">selectedCatalogueRecord</span><span class="p">);</span>
+
+    <span class="c1">//use the selected record array to retrieve Price and Item_ID by name</span>
+    <span class="kd">var</span> <span class="nx">price</span> <span class="o">=</span> <span class="nx">selectedCatalogueRecord</span><span class="p">[</span><span class="s1">&#39;Price&#39;</span><span class="p">];</span>
+	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;price&#39;</span><span class="p">,</span> <span class="nx">price</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">itemID</span> <span class="o">=</span> <span class="nx">selectedCatalogueRecord</span><span class="p">[</span><span class="s1">&#39;Item_ID&#39;</span><span class="p">];</span>
+	<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;itemID&#39;</span><span class="p">,</span> <span class="nx">itemID</span><span class="p">);</span>
+
+    <span class="c1">//push the retrieved values into the other fields in the line item form&#39;s business object</span>
+    <span class="c1">//the UI will update with price, and Item_ID is hidden on the form but shows up in the summary table in another part of the app</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">Observables</span><span class="p">.</span><span class="nx">Order_Line_ItemsEntityDetailArchetype</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">Price_2</span><span class="p">(</span><span class="nx">price</span><span class="p">);</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">Observables</span><span class="p">.</span><span class="nx">Order_Line_ItemsEntityDetailArchetype</span><span class="p">.</span><span class="nx">item</span><span class="p">.</span><span class="nx">Item_ID</span><span class="p">(</span><span class="nx">itemID</span><span class="p">);</span>
+
+  <span class="p">});</span>
+
+<span class="p">...</span></code></pre></div>
+
+<div class="full"><img src="/images/20160917/combobox-now-populates-two-fields.png" /></div>
+
+<p>Now, when a user makes a change with the combobox, our code fires and looks up the price associated with the selected item in the combobox and then pushes that into the editable Price field on our line items business object. A calculated field for extended price multiplies Qty times Price to get a total number. The UI updates and the user can make adjustments before saving.</p>
+
+<p>We ended up removing the default message text in the Custom Code component to make it invisible, but I left it in there in the screenshots above to make it obvious that there was custom code on the page.</p>
+
+            
+            <div class="tags">
+<a href="/tag/ABCS">ABCS</a>
+<a href="/tag/JavaScript">JavaScript</a>
+<a href="/tag/Dev">Dev</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Using the ABCS Custom Code Component to Get and Set Data" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2016/08/24/swapping-in-data-jet-cookbook/">&laquo; Swapping in External Data Sources for the JET Cookbook Examples</a> 
+                 
+                 
+                    <a class="next-post" href="/2016/09/22/functional-programming-javaone-videos/">The Best JavaOne Session I Didn't See (in person) &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

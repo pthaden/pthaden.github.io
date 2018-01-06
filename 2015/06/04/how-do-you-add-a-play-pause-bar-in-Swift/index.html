@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How do you add a play/pause bar in Swift? &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="How do you add a play/pause bar in Swift? ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2015/06/04/how-do-you-add-a-play-pause-bar-in-Swift/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="How do you add a play/pause bar in Swift? "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2015/06/04/how-do-you-add-a-play-pause-bar-in-Swift/"/>
+    
+    
+    <meta property="og:description" content="So let's say you're building a iOS app that plays back an audio file, perhaps as an assignment for..."/>
+    <meta name="description" content="So let's say you're building a iOS app that plays back an audio file, perhaps as an assignment for..."/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2015-04-June" title="June 04, 2015">June 04, 2015</time>
+            </div>
+            <h1 class="title">How do you add a play/pause bar in Swift?</h1>
+            </header>
+
+        <section>
+            <p>So let’s say you’re building a iOS app that plays back an audio file, perhaps as an assignment for the <a href="https://www.udacity.com/course/ios-developer-nanodegree--nd003">Udacity iOS Nanodegree</a> course…</p>
+
+<p>Well, first you’ll need a game plan:</p>
+
+<ul>
+  <li>We need a toolbar to hold the buttons</li>
+  <li>We need fast-forward and reverse buttons</li>
+  <li>These buttons need to be wired up to actions </li>
+  <li>Those actions need to jump forward or rewind the playing audio</li>
+</ul>
+
+<p>Also, some hints will be good.  We’ll be back to scour Google and StackOverflow in time, but first there’s a nice (albeit dated) bit of sample code on <a href="https://developer.apple.com/library/ios/samplecode/avTouch/Introduction/Intro.html">Apple’s Developer Website</a>.  Sure, it’s written in Objective C and predates iOS 8, but it will at least give us something to look at. Download the avTouch sample code and after unzipping, open it in Xcode.</p>
+
+<p>Will it build?  Of course not, it’s a year and a half old and is full of deprecated methods and other warnings.  Our biggest problem is a error in the awakeFromNib method of avTouchController: “Cannot initialize a parameter of type ‘id<avaudiosessiondelegate>' with an lvalue of type 'avTouchController *'"</avaudiosessiondelegate></p>
+
+<div class="full zoomable"><img width="800" src="/images/20150604/xcodeerror.jpg" /></div>
+
+<p>What to do?  Hey, it’s not my code, and I don’t know enough about iOS or Objective C to troubleshoot this.  But I know how to comment out a line, and after putting in two slashes at the front of the troublesome line the project runs in the simulator!  </p>
+
+<div class="full zoomable"><img width="300" src="/images/20150604/avTouch.jpg" /></div>
+
+<p>Clicking around back in Xcode we find avTouchViewController.xib, and it confirms that the UI is just a bunch of controls wired up to outlets and events.  The forward and rewind buttons are, well, buttons wrapped in a toolbar, and the timeline is just a horizontal slider with labels on either end.  We’ll do similar with our code.</p>
+
+<div class="full zoomable"><img width="700" src="/images/20150604/avTouchViewController.xib.jpg" /></div>
+
+<p>Back in the Pitch Perfect app we started for the Udacity project, we’ll open the Play Sounds View Controller and add the UI components.   Add a Toolbar to the bottom of the view.  Next add four Flexible Space Bar Button Items and three Buttons to the toolbar, alternating between them.   Notice how Xcode wraps the buttons inside of Bar Button Items for us.  Delete the Bar Button Item that was a placeholder in the toolbar it was first created. </p>
+
+<div class="full zoomable"><img src="/images/20150604/toolbar.jpg" /></div>
+
+<p>Now let’s replace the text of those items with buttons.  In fact, we can drag our current stop button onto the outline and then delete the item that was there.  Xcode will create a Bar Button Item to wrap our button for us.</p>
+
+<p>We’ll import two images for forward and back.  Create image sets and then change the properties for the two buttons, removing the text and then using the new images.  You may find it easier to click on the buttons themselves in the view’s document outline.</p>
+
+<ul>
+  <li><a href="/images/20150604/forward@2x-iphone.png">forward@2x-iphone.png</a></li>
+  <li><a href="/images/20150604/back@2x-iphone.png">back@2x-iphone.png</a></li>
+</ul>
+
+<div class="full zoomable"><img width="700" src="/images/20150604/buttons.jpg" /></div>
+
+<p>Now to wire these up to do something.</p>
+
+<p>Change Xcode’s view to show the Assistant Editor and reveal the PlaySoundsViewController.swift file for this view.  We need a method to fast forward when we tap the forward button.   Control-drag from the forward button into the view controller code window (again, maybe easier to drag from the document outline), and release in the proper place to insert an action.  After releasing the drag, change the connection to Action and name it jumpForward and make it Type UIButton.</p>
+
+<div class="full zoomable"><img width="500" src="/images/20150604/jumpForward.jpg" /></div>
+
+<p>We’ll start with a simple use case:  tapping the button makes it go forward 0.2 seconds.  Use this code for your action:</p>
+
+<div class="highlight"><pre><code class="language-obj-c" data-lang="obj-c"><span class="p">@</span><span class="kt">IBAction</span> <span class="n">func</span> <span class="n">jumpForward</span><span class="p">(</span><span class="nl">sender</span><span class="p">:</span> <span class="bp">UIButton</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">audioPlayer</span><span class="p">.</span><span class="n">currentTime</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="o">&amp;&amp;</span> <span class="n">audioPlayer</span><span class="p">.</span><span class="n">currentTime</span> <span class="o">&lt;</span> <span class="n">audioPlayer</span><span class="p">.</span><span class="n">duration</span><span class="p">)</span> <span class="p">{</span>
+         <span class="n">audioPlayer</span><span class="p">.</span><span class="n">currentTime</span> <span class="o">=</span> <span class="n">audioPlayer</span><span class="p">.</span><span class="n">currentTime</span> <span class="o">+</span> <span class="mf">0.2</span>
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></div>
+
+<p>Give it a try in the simulator.  It works!  Sort of.  Tapping the button over and over again isn’t the behavior we expect.  We want to hold down the forward button and have it shuttle forward, and then resume play when we let go.    We’ll have to change our code a bit, plus hook up actions to the other events for the button, such as Touch Up Inside and Outside.  </p>
+
+<p>What we want is to have the button repeatedly call a function to jump forward 0.2 seconds.  Although we also want a slight pause in between jumps so that we can hear a bit of audio play.  We need a timer event to fire over and over again until we let go.</p>
+
+<p>We can use an NSTimer to do this (stole that idea from the Apple sample code).  We have to call it a little differently in Swift.</p>
+
+<p>Scroll to the top of your view controller class and declare this variable:</p>
+
+<div class="highlight"><pre><code class="language-obj-c" data-lang="obj-c"><span class="n">var</span> <span class="n">timer</span> <span class="o">=</span> <span class="bp">NSTimer</span><span class="p">()</span></code></pre></div>
+
+<p>Now we need a new Action for the touch down event.  Drag from our forward button’s Connection Inspector handle to our view controller and create a new action named ffwPressed.  </p>
+
+<p>We’ll reuse the jumpForward code as the function that ffwPressed will repeatedly call.  But we need to change it so that any object can call it, so change the sender to AnyObject.</p>
+
+<p>Now we’ll add the code to schedule a timer when ffwPressed is called.  When you’re done your code for these two methods should look like this:</p>
+
+<div class="highlight"><pre><code class="language-obj-c" data-lang="obj-c"><span class="p">@</span><span class="kt">IBAction</span> <span class="n">func</span> <span class="n">ffwPressed</span><span class="p">(</span><span class="nl">sender</span><span class="p">:</span> <span class="bp">UIButton</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">timer</span> <span class="o">=</span> <span class="bp">NSTimer</span><span class="p">.</span><span class="n">scheduledTimerWithTimeInterval</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="nl">target</span><span class="p">:</span><span class="nb">self</span><span class="p">,</span> <span class="nl">selector</span><span class="p">:</span> <span class="n">Selector</span><span class="p">(</span><span class="s">&quot;jumpForward&quot;</span><span class="p">),</span> <span class="nl">userInfo</span><span class="p">:</span> <span class="nb">nil</span><span class="p">,</span> <span class="nl">repeats</span><span class="p">:</span> <span class="nb">true</span><span class="p">)</span>
+
+    <span class="p">}</span>
+    
+    <span class="n">func</span> <span class="n">jumpForward</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">audioPlayer</span><span class="p">.</span><span class="n">currentTime</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="o">&amp;&amp;</span> <span class="n">audioPlayer</span><span class="p">.</span><span class="n">currentTime</span> <span class="o">&lt;</span> <span class="n">audioPlayer</span><span class="p">.</span><span class="n">duration</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">audioPlayer</span><span class="p">.</span><span class="n">currentTime</span> <span class="o">=</span> <span class="n">audioPlayer</span><span class="p">.</span><span class="n">currentTime</span> <span class="o">+</span> <span class="mf">0.2</span>
+        <span class="p">}</span>
+    <span class="p">}</span></code></pre></div>
+
+<p>This will be great!  When we press down, the timer will repeatedly call the jumpForward function every 0.2 seconds.  Now we need a function to stop the timer when we let go.</p>
+
+<p>From the Connections Inspector find the Touch Up Inside event and click the tiny X to delete the existing mapping to jumpForward().  Now drag the handle for Touch Up Inside to create a new action to give it a new mapping.  Name this Action ffwReleased. </p>
+
+<p>When we let go, we want the timer to stop firing, so we can just invalidate the timer.  Add this code to the view controller:</p>
+
+<div class="highlight"><pre><code class="language-obj-c" data-lang="obj-c"><span class="p">@</span><span class="kt">IBAction</span> <span class="n">func</span> <span class="n">ffwReleased</span><span class="p">(</span><span class="nl">sender</span><span class="p">:</span> <span class="bp">UIButton</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">timer</span><span class="p">.</span><span class="n">invalidate</span><span class="p">()</span>
+    <span class="p">}</span></code></pre></div>
+
+<p>While we’re at it, we should map this same function to Touch Up Outside and Touch Drag Outside so that ffwReleased() runs no matter how your finger leaves the button.  Connect these events to the ffwReleased() action too.</p>
+
+<p>Test it in the simulator:  it works!</p>
+
+<p>Last thing to do is repeat all that with the rewind button.  Now you’ve got a working toolbar!</p>
+
+<div class="full zoomable"><img width="300" src="/images/20150604/finished.jpg" /></div>
+
+
+            
+            <div class="tags">
+<a href="/tag/iOS">iOS</a>
+<a href="/tag/Swift">Swift</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="How do you add a play/pause bar in Swift?" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2015/01/20/create-stock-ticker-webservice-osc-r9/">&laquo; Create a Stock Ticker WebService in Oracle Sales Cloud R9</a> 
+                 
+                 
+                    <a class="next-post" href="/2015/06/17/x-apex-status-code-and-restful-services/">X-APEX-STATUS-CODE and APEX RESTful Services &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

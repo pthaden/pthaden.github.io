@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modules are Your Friends &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Modules are Your Friends ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2016/01/23/modules-are-your-friends/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Modules are Your Friends "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2016/01/23/modules-are-your-friends/"/>
+    
+    
+    <meta property="og:description" content="Modular development with Oracle JET using ojTrain as an example"/>
+    <meta name="description" content="Modular development with Oracle JET using ojTrain as an example"/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2016-23-January" title="January 23, 2016">January 23, 2016</time>
+            </div>
+            <h1 class="title">Modules are Your Friends</h1>
+            </header>
+
+        <section>
+            <p>The JET Cookbook has a <a href="http://www.oracle.com/webfolder/technetwork/jet/uiComponents-ojModule-simpleNavigation.html">section on ojModule</a> and how to use it to split your code up into components. Here’s an example of breaking up code to make it modular and easier to understand in the context of an Oracle JET Train. </p>
+
+<p>The <a href="http://www.oracle.com/webfolder/technetwork/jet/uiComponents-train-basic.html">ojTrain</a> is a great way of leading a user through the steps of a process, letting them know where there are, where they’ve been, and how much is left to do. In the cookbook sample code, you can see it’s possible to stick all of the code for all panels of the train into one viewModel. </p>
+
+<div class="full zoomable"><img src="/images/20160223/ojTrainCookbook.png" /></div>
+
+<p>Here’s the code that creates that tab, modified from the Cookbook code to work with the JET QuickStart:</p>
+
+<h4 id="viewsojtrainhtml">views/ojTrain.html</h4>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>ojTrain Content<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;train-container&quot;</span> <span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;train&quot;</span> <span class="na">class=</span><span class="s">&quot;oj-train-stretch&quot;</span> <span class="na">style=</span><span class="s">&quot;max-width:700px;margin-left:auto;margin-right:auto;&quot;</span>
+    <span class="na">data-bind=</span><span class="s">&quot;ojComponent:{</span>
+<span class="s">    component: &#39;ojTrain&#39;, </span>
+<span class="s">    selected: currentStepValue, </span>
+<span class="s">    steps: stepArray}&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;br/&gt;</span>
+  <span class="nt">&lt;h3</span> <span class="na">id=</span><span class="s">&quot;currentStepText&quot;</span>
+    <span class="na">data-bind=</span><span class="s">&quot;text: &#39;You are on &#39; + currentStepValueText()&quot;</span> 
+    <span class="na">style=</span><span class="s">&quot;text-align: center&quot;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/h3&gt;</span>
+  <span class="nt">&lt;br/&gt;</span>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
+
+<h4 id="viewmodelsojtrainjs">viewModels/ojTrain.js</h4>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;ojs/ojcore&#39;</span><span class="p">,</span> <span class="s1">&#39;knockout&#39;</span><span class="p">,</span> <span class="s1">&#39;jquery&#39;</span><span class="p">,</span> <span class="s1">&#39;ojs/ojknockout&#39;</span><span class="p">,</span> <span class="s1">&#39;ojs/ojtrain&#39;</span><span class="p">,</span> <span class="s1">&#39;ojs/ojbutton&#39;</span><span class="p">],</span>
+  <span class="kd">function</span> <span class="p">(</span><span class="nx">oj</span><span class="p">,</span> <span class="nx">ko</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">TrainViewModel</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">currentStepValue</span> <span class="o">=</span> <span class="nx">ko</span><span class="p">.</span><span class="nx">observable</span><span class="p">(</span><span class="s1">&#39;stp1&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">stepArray</span> <span class="o">=</span>
+          <span class="nx">ko</span><span class="p">.</span><span class="nx">observableArray</span><span class="p">(</span>
+             <span class="p">[{</span><span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Step One&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;stp1&#39;</span><span class="p">},</span>
+              <span class="p">{</span><span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Step Two&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;stp2&#39;</span><span class="p">},</span>
+              <span class="p">{</span><span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Step Three&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;stp3&#39;</span><span class="p">},</span>
+              <span class="p">{</span><span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Step Four&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;stp4&#39;</span><span class="p">},</span>
+              <span class="p">{</span><span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Step Five&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;stp5&#39;</span><span class="p">}]);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">currentStepValueText</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#train&quot;</span><span class="p">).</span><span class="nx">ojTrain</span><span class="p">(</span><span class="s2">&quot;getStep&quot;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">currentStepValue</span><span class="p">())).</span><span class="nx">label</span><span class="p">;</span>
+      <span class="p">};</span>
+    <span class="p">};</span>
+    
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">TrainViewModel</span><span class="p">();</span>
+
+  <span class="p">});</span></code></pre></div>
+
+<p>But what happens when our panels get too huge? Or what if each panel should do something different? Combining all of the code for those panels into one view and viewModel could get messy quick, and maintaining the code gets harder and harder if it’s all jumbled together in one file.</p>
+
+<h2 id="ojmodules-to-the-rescue">ojModules to the rescue</h2>
+
+<p>JET’s ojModule Binding lets us break up our code into smaller components. With some creative directory naming and computed variables we can even gather everything together so that it’s easy to see where the code for our train panels is stored.</p>
+
+<p>Let’s start by creating a folder for the modules just to keep things organized. Right-click on viewModels and choose <kbd>New &gt;&gt; Folder</kbd> and create a <code>myTrain-modules</code> folder. Do the same for the views folder and use the same <code>myTrain-modules</code> name.</p>
+
+<div class="full zoomable"><img src="/images/20160223/newmyTrainFolders.png" /></div>
+
+<p>In these folders we need some simple placeholder content for now, but we’ll wire it up with a proper viewModel for future use. We could set up a view-only ojModule by passing a <code>{viewName: 'viewfilename'}</code> object instead of the moduleName below, but this way we’ll have a backing viewModel in case we need it later. </p>
+
+<p>In the <code>viewModels/myTrain-modules</code> folder create a simple <code>stp1.js</code> file with a <code>define()</code> block that returns a viewModel function, just like you would for a new tab in the QuickStart (which after all uses ojModule!). In the <code>views/myTrain-modules</code> folder create a corresponding <code>stp1.html</code> file with some HTML for our first panel. Here’s some suggested code that will get you going:</p>
+
+<h4 id="viewsmytrain-modulesstp1html">views/myTrain-modules/stp1.html</h4>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h2&gt;</span>step1<span class="nt">&lt;/h2&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-flex&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-panel oj-panel-alt2 oj-panel-shadow-md oj-margin&quot;</span> <span class="na">style=</span><span class="s">&quot;width: 100%&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">data-bind=</span><span class="s">&quot;text: message&quot;</span><span class="nt">&gt;&lt;/span&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span></code></pre></div>
+
+<h4 id="viewmodelsmytrain-modulesstp1js">viewModels/myTrain-modules/stp1.js</h4>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="cm">/**</span>
+<span class="cm"> * step1 module</span>
+<span class="cm"> */</span>
+<span class="nx">define</span><span class="p">([</span><span class="s1">&#39;ojs/ojcore&#39;</span><span class="p">,</span> <span class="s1">&#39;knockout&#39;</span>
+<span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">oj</span><span class="p">,</span> <span class="nx">ko</span><span class="p">)</span> <span class="p">{</span>
+  <span class="cm">/**</span>
+<span class="cm">   * The view model for the main content view template</span>
+<span class="cm">   */</span>
+  <span class="kd">function</span> <span class="nx">step1ContentViewModel</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">message</span> <span class="o">=</span> <span class="nx">ko</span><span class="p">.</span><span class="nx">observable</span><span class="p">(</span><span class="s2">&quot;this is the modular step one panel&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+    
+  <span class="k">return</span> <span class="nx">step1ContentViewModel</span><span class="p">;</span>
+<span class="p">});</span></code></pre></div>
+
+<p>We have five steps in our cookbook sample, so go ahead and duplicate the stp1 files to stp2, stp3, stp4 and stp5 and make edits accordingly to the viewModels’ <code>self.message</code> observable.</p>
+
+<div class="full zoomable"><img src="/images/20160223/fiveStepFiles.png" /></div>
+
+<h2 id="call-your-submodules-from-your-module">Call your submodules from your module</h2>
+
+<p>Now we need to modify the ojTrain code so that it uses our module content. We’ll hard-code stp1 first to make sure all is in place, and after that we’ll make the module dynamically load depending on what step in the train we’re on.</p>
+
+<p>Since we’ll be using ojModule in the view’s HTML, we need to add <code>'ojs/ojmodule'</code> to the define block for our <code>viewModels/ojTrain.js</code> file:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;ojs/ojcore&#39;</span><span class="p">,</span> <span class="s1">&#39;knockout&#39;</span><span class="p">,</span> <span class="s1">&#39;jquery&#39;</span><span class="p">,</span> <span class="s1">&#39;ojs/ojknockout&#39;</span><span class="p">,</span> <span class="s1">&#39;ojs/ojtrain&#39;</span><span class="p">,</span> <span class="s1">&#39;ojs/ojbutton&#39;</span><span class="p">,</span> <span class="s1">&#39;ojs/ojmodule&#39;</span><span class="p">],</span>
+    <span class="kd">function</span> <span class="p">(</span><span class="nx">oj</span><span class="p">,</span> <span class="nx">ko</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span>
+    <span class="p">{</span> <span class="p">...</span></code></pre></div>
+
+<p>With that in place we can modify the <code>views/ojTrain.html</code> file to pull in the step 1 file as a module. Replace the <code>&lt;h3 id="currentStepText"...</code> code with a <code>&lt;div&gt;</code> that is data-bound to our module. Again, we’re hardcoding with a string here; we’ll make it dependent on the train’s current step in the next section:</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html">...
+<span class="nt">&lt;br/&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">data-bind=</span><span class="s">&quot;ojModule: &#39;myTrain-modules/stp1&#39;&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;br/&gt;</span>
+...</code></pre></div>
+
+<p>So now you should see new content under the train, but there’s that problem that the content is the same no matter which step of the train we’re on. We need to make our ojModule dependent upon the ojTrain’s current state, and for that we need a computed observable.</p>
+
+<div class="full zoomable"><img src="/images/20160223/almostThereNoDynamicSwitchingYet.png" /></div>
+
+<h2 id="make-it-change-based-on-the-current-train-step">Make it change based on the current train step</h2>
+<p>Instead of that hard-coded string in the ojModule <code>data-bind</code>, we can have an observable in the viewModel tell us the path to the module. If we make that observable a <a href="http://knockoutjs.com/documentation/computed-pure.html">pureComputed</a>, it will always have the right value for the ojModule call even as we click through the steps of our train. </p>
+
+<p>The cookbook code for the Train is already storing its <code>selected:</code> state in a <code>currentStepValue</code> observable, and we conveniently named our module filenames with the same naming convention as the currentStepValue. We just need to prepend the module directory and put it in a function that will return the live value of the ojTrain’s current step.</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">...</span>
+<span class="k">this</span><span class="p">.</span><span class="nx">modulePath</span> <span class="o">=</span> <span class="nx">ko</span><span class="p">.</span><span class="nx">pureComputed</span><span class="p">(</span>
+  <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;myTrain-module/&#39;</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">currentStepValue</span><span class="p">());</span>
+  <span class="p">}</span>
+<span class="p">);</span></code></pre></div>
+
+<p>Last, update the <code>views/ojTrain.html</code> binding for ojModule to point to our ModulePath pureComputed observable instead of the hard-coded string above.</p>
+
+<h4 id="final-viewsojtrainhtml">final views/ojTrain.html</h4>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>ojTrain Content<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;train-container&quot;</span> <span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;train&quot;</span> <span class="na">class=</span><span class="s">&quot;oj-train-stretch&quot;</span> <span class="na">style=</span><span class="s">&quot;max-width:700px;margin-left:auto;margin-right:auto;&quot;</span>
+    <span class="na">data-bind=</span><span class="s">&quot;ojComponent:{</span>
+<span class="s">    component: &#39;ojTrain&#39;, </span>
+<span class="s">    selected: currentStepValue, </span>
+<span class="s">    steps: stepArray}&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;br/&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">data-bind=</span><span class="s">&quot;ojModule: modulePath&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+  <span class="nt">&lt;br/&gt;</span>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
+
+<h4 id="final-viewmodelsojtrainjs">final viewModels/ojTrain.js</h4>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;ojs/ojcore&#39;</span><span class="p">,</span> <span class="s1">&#39;knockout&#39;</span><span class="p">,</span> <span class="s1">&#39;jquery&#39;</span><span class="p">,</span> <span class="s1">&#39;ojs/ojknockout&#39;</span><span class="p">,</span> <span class="s1">&#39;ojs/ojtrain&#39;</span><span class="p">,</span> <span class="s1">&#39;ojs/ojbutton&#39;</span><span class="p">,</span> <span class="s1">&#39;ojs/ojmodule&#39;</span><span class="p">],</span>
+  <span class="kd">function</span> <span class="p">(</span><span class="nx">oj</span><span class="p">,</span> <span class="nx">ko</span><span class="p">,</span> <span class="nx">$</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="kd">function</span> <span class="nx">TrainViewModel</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">currentStepValue</span> <span class="o">=</span> <span class="nx">ko</span><span class="p">.</span><span class="nx">observable</span><span class="p">(</span><span class="s1">&#39;stp1&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">stepArray</span> <span class="o">=</span>
+          <span class="nx">ko</span><span class="p">.</span><span class="nx">observableArray</span><span class="p">(</span>
+             <span class="p">[{</span><span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Step One&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;stp1&#39;</span><span class="p">},</span>
+              <span class="p">{</span><span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Step Two&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;stp2&#39;</span><span class="p">},</span>
+              <span class="p">{</span><span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Step Three&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;stp3&#39;</span><span class="p">},</span>
+              <span class="p">{</span><span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Step Four&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;stp4&#39;</span><span class="p">},</span>
+              <span class="p">{</span><span class="nx">label</span><span class="o">:</span> <span class="s1">&#39;Step Five&#39;</span><span class="p">,</span> <span class="nx">id</span><span class="o">:</span> <span class="s1">&#39;stp5&#39;</span><span class="p">}]);</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">modulePath</span> <span class="o">=</span> <span class="nx">ko</span><span class="p">.</span><span class="nx">pureComputed</span><span class="p">(</span>
+        <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;myTrain-modules/&#39;</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">currentStepValue</span><span class="p">());</span>
+        <span class="p">}</span>
+      <span class="p">);</span>
+    <span class="p">};</span>
+
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">TrainViewModel</span><span class="p">();</span>
+
+  <span class="p">});</span></code></pre></div>
+
+<h2 id="finished-product">Finished product</h2>
+
+<p>When you click the steps in the train it updates the selected currentStepValue, which creates a new function for the modulePath, which is used to load the correct ojModule. Click another step in the train, and the beautiful process repeats.</p>
+
+<div class="full zoomable"><img src="/images/20160223/modularTrain.gif" /></div>
+
+
+            
+            <div class="tags">
+<a href="/tag/Oracle JET">Oracle JET</a>
+<a href="/tag/JavaScript">JavaScript</a>
+<a href="/tag/Dev">Dev</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Modules are Your Friends" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2016/01/21/creating-osc-calendar-activity-rest/">&laquo; Creating Oracle Sales Cloud Calendar Activities Via APEX REST Calls</a> 
+                 
+                 
+                    <a class="next-post" href="/2016/02/25/passing-data-into-ojmodules/">Passing Data into ojModules &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

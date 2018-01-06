@@ -1,110 +1,1176 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title></title>
+    <title>Like A House Afire</title>
+    <subtitle>Like all get out</subtitle>
+    <description>a blog by Paul Thaden</description>
     <link>http://www.likeahouseafire.com</link>
     <atom:link href="http://www.likeahouseafire.com/feed.xml" rel="self" type="application/rss+xml" />
-    <description></description>
     <language>en-us</language>
-    <pubDate>Tue, 01 Apr 2014 06:57:16 +0000</pubDate>
-    <lastBuildDate>Tue, 01 Apr 2014 06:57:16 +0000</lastBuildDate>
+    <pubDate>Sat, 06 Jan 2018 13:19:30 +0000</pubDate>
+    <lastBuildDate>Sat, 06 Jan 2018 13:19:30 +0000</lastBuildDate>
 
     
     
     <item>
-      <title>Jekyll Incorporated Features</title>
-      <link>http://www.likeahouseafire.com/2013/10/08/incorporated/</link>
-      <pubDate>Tue, 08 Oct 2013 00:00:00 +0000</pubDate>
+      <title>Dynamic Gauge Colors for JET Visualizations</title>
+      <link>http://www.likeahouseafire.com/2018/01/05/dynamic-gauge-colors/</link>
+      <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
       <author></author>
-      <guid>http://www.likeahouseafire.com/2013/10/08/incorporated</guid>
-      <description>&lt;p&gt;Incorporated provides a great typography, responsive design, author details, semantic markup and more.&lt;/p&gt;
+      <guid>http://www.likeahouseafire.com/2018/01/05/dynamic-gauge-colors</guid>
+      <description>&lt;p&gt;The gauges created by JET’s &lt;code&gt;&amp;lt;oj-status-meter-gauge&amp;gt;&lt;/code&gt; are pretty, but I wanted to dress up the colors a bit.  I especially wanted to replicate the &lt;a href=&quot;http://justgage.com/&quot;&gt;JustGage&lt;/a&gt; fade that smoothly goes from color to color:&lt;/p&gt;
 
-&lt;p&gt;You can set customize post covers, and other things directly in the post front matter:&lt;/p&gt;
-&lt;div class=&#39;highlight&#39;&gt;&lt;pre&gt;&lt;code class=&#39;yaml&#39;&gt;&lt;span class=&#39;l-Scalar-Plain&#39;&gt;layout&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;post&lt;/span&gt;
+&lt;figure class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20180105/justgage-fade.gif&quot; /&gt;&lt;/figure&gt;
 
-&lt;span class=&#39;l-Scalar-Plain&#39;&gt;title&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;Jekyll Incorporated Features&lt;/span&gt;
-&lt;span class=&#39;l-Scalar-Plain&#39;&gt;subtitle&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;s&#39;&gt;&amp;quot;What&amp;#39;s&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;in&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;the&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;box&amp;quot;&lt;/span&gt;
+&lt;p&gt;Oracle JET has some dynamic color capability for the &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/jet/jetCookbook.html?component=home&amp;amp;demo=rootVisualizations_childGauge&quot;&gt;gauge visualizations&lt;/a&gt;, but it revolves around setting a &lt;code&gt;thresholds&lt;/code&gt; array with distinct boundaries.  The &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/jet/jetCookbook.html?component=statusMeterGauge&amp;amp;demo=statusMeterGaugeHorizontal&quot;&gt;cookbook has example code that sets three levels&lt;/a&gt; for all gauges at 33, 67, and max, with red, yellow and green as the respective default threshold colors:&lt;/p&gt;
 
-&lt;span class=&#39;c1&#39;&gt;# Setup post cover image in /images/&lt;/span&gt;
-&lt;span class=&#39;l-Scalar-Plain&#39;&gt;cover_image&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;blog-cover.jpg&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;thresholdValues&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;33&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;67&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{}];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;span class=&#39;l-Scalar-Plain&#39;&gt;excerpt&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;s&#39;&gt;&amp;quot;Incorporated&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;provides&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;a&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;great&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;typography,&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;responsive&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;design,&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;author&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;details,&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;semantic&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;markup&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;and&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;more.&amp;quot;&lt;/span&gt;
+&lt;p&gt;This array is used on the &lt;code&gt;thresholds=&quot;[[thresholdValues]]&quot;&lt;/code&gt; attribute of the status meter in the cookbook’s HTML.  But we’re not limited to just three levels or colors, nor are we limited to just one thresholds array.  We can create unique thresholds and color schemes for each of our gauges.  This freedom is good when the default red-yellow-green colors don’t match your requirements, such as how showing red for a low temperature just doesn’t feel right.  &lt;/p&gt;
 
-&lt;span class=&#39;c1&#39;&gt;# Author details, including Google Plus authorship&lt;/span&gt;
-&lt;span class=&#39;l-Scalar-Plain&#39;&gt;author&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;name&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;Karri Saarinen&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;twitter&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;karrisaarinen&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;gplus&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;100687498195339762535&lt;/span&gt; 
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;bio&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;Co-founder, Design&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;image&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;ks.jpg&lt;/span&gt;
-  
-&lt;span class=&#39;c1&#39;&gt;# Keep it as draft, not published in index.html or feed.xml&lt;/span&gt;
-&lt;span class=&#39;l-Scalar-Plain&#39;&gt;draft&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;false&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h4 id=&quot;configurable__code_snipped_highlighting&quot;&gt;Configurable &amp;amp; Code Snipped Highlighting&lt;/h4&gt;
+&lt;p&gt;In the JSFiddle below, notice how there’s a settings object for each gauge, including independent ranges and colors for the thresholds.&lt;/p&gt;
 
-&lt;p&gt;/assets/stylesheets/main.scss:&lt;/p&gt;
-&lt;div class=&#39;highlight&#39;&gt;&lt;pre&gt;&lt;code class=&#39;scss&#39;&gt;&lt;span class=&#39;cm&#39;&gt;/* Bodytext font */&lt;/span&gt;
-&lt;span class=&#39;nv&#39;&gt;$font&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;s2&#39;&gt;&amp;quot;Droid Sans&amp;quot;&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;,&lt;/span&gt; &lt;span class=&#39;s2&#39;&gt;&amp;quot;Helvetica Neue&amp;quot;&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;,&lt;/span&gt; &lt;span class=&#39;n&#39;&gt;Helvetica&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;,&lt;/span&gt; &lt;span class=&#39;n&#39;&gt;Arial&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;,&lt;/span&gt; &lt;span class=&#39;no&#39;&gt;sans-serif&lt;/span&gt;&lt;span class=&#39;p&#39;&gt;;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;thermometerScale&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;thresholds&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;deeppink&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;magenta&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;purple&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; 
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;30&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;blue&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;skyblue&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;green&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; 
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;yellowgreen&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;70&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;yellow&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;orange&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;90&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;red&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;firebrick&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;maroon&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;barometerScale&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;93.1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;106.7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;thresholds&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;96.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;dimgray&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shortDesc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;stormy&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;98.2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;darkblue&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shortDesc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;rain&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;101.2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;lightskyblue&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shortDesc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;change&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; 
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;104.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;deepskyblue&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shortDesc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;fair&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;106.7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;goldenrod&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shortDesc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;very dry&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;hygrometerScale&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;thresholds&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; 
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;40&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;khaki &amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shortDesc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;dry&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;60&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;darkseagreen&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shortDesc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;comfort&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;aqua&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;shortDesc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;wet&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;          
+  &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-&lt;span class=&#39;cm&#39;&gt;/* Font for headings */&lt;/span&gt;
-&lt;span class=&#39;nv&#39;&gt;$fontheadings&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;s2&#39;&gt;&amp;quot;Droid Sans&amp;quot;&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;,&lt;/span&gt; &lt;span class=&#39;s2&#39;&gt;&amp;quot;Helvetica Neue&amp;quot;&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;,&lt;/span&gt; &lt;span class=&#39;n&#39;&gt;Helvetica&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;,&lt;/span&gt; &lt;span class=&#39;n&#39;&gt;Arial&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;,&lt;/span&gt; &lt;span class=&#39;no&#39;&gt;sans-serif&lt;/span&gt;&lt;span class=&#39;p&#39;&gt;;&lt;/span&gt;
+&lt;script async=&quot;&quot; src=&quot;//jsfiddle.net/pthaden/evzatscd/embed/result,js,html,css/&quot;&gt;&lt;/script&gt;
 
-&lt;span class=&#39;cm&#39;&gt;/* Text colors */&lt;/span&gt;
-&lt;span class=&#39;nv&#39;&gt;$text&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;mh&#39;&gt;#21272d&lt;/span&gt;&lt;span class=&#39;p&#39;&gt;;&lt;/span&gt;
-&lt;span class=&#39;nv&#39;&gt;$textmuted&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;mh&#39;&gt;#848484&lt;/span&gt;&lt;span class=&#39;p&#39;&gt;;&lt;/span&gt;
-&lt;span class=&#39;nv&#39;&gt;$accent&lt;/span&gt;&lt;span class=&#39;o&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;mh&#39;&gt;#2077b2&lt;/span&gt;&lt;span class=&#39;p&#39;&gt;;&lt;/span&gt;    
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;config.yml:&lt;/p&gt;
-&lt;div class=&#39;highlight&#39;&gt;&lt;pre&gt;&lt;code class=&#39;yaml&#39;&gt;&lt;span class=&#39;l-Scalar-Plain&#39;&gt;inc&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;
-  &lt;span class=&#39;c1&#39;&gt;# Blog Information&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;title&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;        &lt;span class=&#39;s&#39;&gt;&amp;quot;Jekyll&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;Incorporated&amp;quot;&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;subtitle&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;     &lt;span class=&#39;s&#39;&gt;&amp;quot;Modern&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;Jekyll&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;based&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;blog&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;for&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;companies&amp;quot;&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;cover_image&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;blog-cover.jpg&lt;/span&gt;
-  
-  &lt;span class=&#39;c1&#39;&gt;# Company information&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;company&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;      &lt;span class=&#39;l-Scalar-Plain&#39;&gt;Incorporated&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;url&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;          &lt;span class=&#39;l-Scalar-Plain&#39;&gt;http://incorporated.sendtoinc.com/&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;facebook&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;     &lt;span class=&#39;l-Scalar-Plain&#39;&gt;sendtoinc&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;twitter&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;      &lt;span class=&#39;l-Scalar-Plain&#39;&gt;sendtoinc&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;about_link&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;   &lt;span class=&#39;l-Scalar-Plain&#39;&gt;https://sendtoinc.com/about/&lt;/span&gt;
-  
-  &lt;span class=&#39;c1&#39;&gt;# Product Information&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;product_link&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; &lt;span class=&#39;l-Scalar-Plain&#39;&gt;http://incorporated.sendtoinc.com/&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;tagline&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;      &lt;span class=&#39;s&#39;&gt;&amp;quot;Get&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;a&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;modern&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;blog&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;for&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;your&lt;/span&gt;&lt;span class=&#39;nv&#39;&gt; &lt;/span&gt;&lt;span class=&#39;s&#39;&gt;company&amp;quot;&lt;/span&gt;
-  
-  &lt;span class=&#39;c1&#39;&gt;# Comments&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;disqus&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;
-    &lt;span class=&#39;c1&#39;&gt;# Eg. &amp;quot;exampleblog&amp;quot; Set to false to disable comments&lt;/span&gt;
-    &lt;span class=&#39;l-Scalar-Plain&#39;&gt;shortname&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;false&lt;/span&gt;
-  
-  
-  &lt;span class=&#39;c1&#39;&gt;# Sharing settings&lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;sharing&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;
-    &lt;span class=&#39;l-Scalar-Plain&#39;&gt;twitter&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;    &lt;span class=&#39;l-Scalar-Plain&#39;&gt;false&lt;/span&gt;
-    &lt;span class=&#39;l-Scalar-Plain&#39;&gt;facebook&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;   &lt;span class=&#39;l-Scalar-Plain&#39;&gt;false&lt;/span&gt;
-    &lt;span class=&#39;l-Scalar-Plain&#39;&gt;gplus&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;      &lt;span class=&#39;l-Scalar-Plain&#39;&gt;false&lt;/span&gt;
-    &lt;span class=&#39;l-Scalar-Plain&#39;&gt;hn&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;         &lt;span class=&#39;l-Scalar-Plain&#39;&gt;false&lt;/span&gt;
-    
-  
- &lt;span class=&#39;c1&#39;&gt;# Analytics     &lt;/span&gt;
-  &lt;span class=&#39;l-Scalar-Plain&#39;&gt;analytics&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;
-    &lt;span class=&#39;l-Scalar-Plain&#39;&gt;google&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt; 
-      &lt;span class=&#39;c1&#39;&gt;# eg. &amp;#39;UA-123-12&amp;#39;&lt;/span&gt;
-      &lt;span class=&#39;l-Scalar-Plain&#39;&gt;id&lt;/span&gt;&lt;span class=&#39;p-Indicator&#39;&gt;:&lt;/span&gt;       &lt;span class=&#39;l-Scalar-Plain&#39;&gt;false&lt;/span&gt;    
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;&lt;strong&gt;Zoomable images&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#39;full zoomable&#39;&gt;&lt;img src=&#39;/images/incorporated.jpg&#39; /&gt;&lt;/div&gt;
-&lt;p&gt;&lt;strong&gt;Awesome quotes&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&quot;get-me-some-of-that-sweet-gradient&quot;&gt;Get me some of that sweet gradient&lt;/h2&gt;
 
-&lt;blockquote&gt;
-&lt;p&gt;“Effective companies tend to communicate more, their people are curious and they have opinions”&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;So this is fine for rough ranges: it gives us suitable colors matching the gauges’ purpose and lets us define the color-change points on the scale.  But the transitions are rather abrupt – you’re the same color up until just below the max of a range, and then suddenly you’re a different color.  &lt;/p&gt;
 
-&lt;p&gt;Stay tuned for updates.&lt;/p&gt;</description>
+&lt;p&gt;We could soften our color choices and make them more similar to a gradient or perhaps set up tinier and tinier ranges, but why not get JET to figure out how to transition the colors smoothly?&lt;/p&gt;
+
+&lt;p&gt;I’m sure smarter people than me can figure out a better algorithm, but one approach is to hook into the SVG rendering that JET does behind the scenes by adding an &lt;code&gt;svg-style&lt;/code&gt; attribute to the &lt;code&gt;&amp;lt;oj-status-meter-gauge&amp;gt;&lt;/code&gt;.  This attribute expects a JSON object of CSS styling that will get applied to the gauge when its SVG is generated.  Following the thoughts in the blog article &lt;a href=&quot;https://community.oracle.com/community/development_tools/oracle-jet/blog/2016/08/23/chart-custom-fill-and-stroke&quot;&gt;Chart Custom Fill and Stroke&lt;/a&gt;, we could even pass in chunks of SVG – like a &lt;code&gt;linearGradient&lt;/code&gt; definition – to achieve a smooth fade:&lt;/p&gt;
+
+&lt;figure class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20180105/gradient-svg-fade.png&quot; /&gt;&lt;/figure&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;svg&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;height=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;0&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;width=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;  
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;defs&amp;gt;&lt;/span&gt;  
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;linearGradient&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;gradient&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;x1=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;0%&amp;quot;&lt;/span&gt;  &lt;span class=&quot;na&quot;&gt;y1=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;100%&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;  
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;stop&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;offset=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;0%&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;style=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;stop-color: #66ccff&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&amp;lt;/stop&amp;gt;&lt;/span&gt;  
+      &lt;span class=&quot;nt&quot;&gt;&amp;lt;stop&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;offset=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;80%&amp;quot;&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;style=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;stop-color: #0000FF&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&amp;lt;/stop&amp;gt;&lt;/span&gt;  
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;/linearGradient&amp;gt;&lt;/span&gt;  
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/defs&amp;gt;&lt;/span&gt;  
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/svg&amp;gt;&lt;/span&gt; 
+
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;oj-status-meter-gauge&lt;/span&gt; 
+  &lt;span class=&quot;na&quot;&gt;id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;barometer&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;min=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;[[thresholds.barometerMin]]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;max=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;[[thresholds.barometerMax]]&lt;/span&gt; 
+  &lt;span class=&quot;na&quot;&gt;data-title=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Barometer&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;data-label=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Pressure/kPa&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;value=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;{{barometer}}&amp;quot;&lt;/span&gt; 
+  &lt;span class=&quot;na&quot;&gt;orientation=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;circular&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;center&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;renderer=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;[[oj.KnockoutTemplateUtils.getRenderer(&amp;#39;centerTemplate&amp;#39;)]]&amp;quot;&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;svg-style=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39; {&amp;quot;fill&amp;quot;: &amp;quot;url(#gradient)&amp;quot;} &amp;#39;&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;style=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;align:center;margin-top:5px;margin-bottom:5px;height:240px;width:25%;&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;oj-flex-item&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/oj-status-meter-gauge&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Another option is to hook up the &lt;code&gt;svg-style&lt;/code&gt; with a function from the backing viewModel, one that can take parameters and return an object of style built from the current value and scaled to the min and max: &lt;/p&gt;
+
+&lt;figure class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20180105/jet-fade.gif&quot; /&gt;&lt;/figure&gt;
+
+&lt;p&gt;Below is some code I’m not proud of, because what I really wanted to do is hook an event on the gauge’s value change or refactor out a generic, reusable function that all gauges could use, or something elegant like that.  But I couldn’t figure out a way to pass in the gauge’s context or an onchange event, and instead the function parameters are clunky and ham-handed.  Still, maybe this is the start of something, or maybe there’s a better way to approach dynamically styling the gauges as the values change?&lt;/p&gt;
+
+&lt;h4 id=&quot;viewhtml&quot;&gt;view.html&lt;/h4&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;oj-status-meter-gauge&lt;/span&gt; 
+  &lt;span class=&quot;na&quot;&gt;id=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;thermometer&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;min=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;[[thresholds.thermometerMin]]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;max=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;[[thresholds.thermometerMax]]&lt;/span&gt; 
+  &lt;span class=&quot;na&quot;&gt;data-title=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Thermometer&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;data-label=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;° Fahrenheit&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;value=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;{{thermometer}}&amp;quot;&lt;/span&gt; 
+  &lt;span class=&quot;na&quot;&gt;orientation=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;circular&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;center&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;renderer=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;[[oj.KnockoutTemplateUtils.getRenderer(&amp;#39;centerTemplate&amp;#39;)]]&amp;quot;&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;svg-style=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;[[customSvgStyle(thermometer(), thresholds)]]&amp;quot;&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;style=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;align:center;margin-top:5px;margin-bottom:5px;height:240px;width:25%;&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;class=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;oj-flex-item&amp;quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/oj-status-meter-gauge&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;viewmodeljs&quot;&gt;viewModel.js&lt;/h4&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;c1&quot;&gt;// don&amp;#39;t forget to include dependencies for ojcolor and ojvalidation&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...,&lt;/span&gt; 
+  &lt;span class=&quot;s1&quot;&gt;&amp;#39;ojs/ojvalidation-base&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;s1&quot;&gt;&amp;#39;ojs/ojcolor&amp;#39;&lt;/span&gt; 
+&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+
+
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+
+&lt;span class=&quot;nx&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;customSvgStyle&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;thresholds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; 
+          &lt;span class=&quot;nx&quot;&gt;fill&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getColorAtScalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;thresholds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;thresholds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+        &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt; 
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getColorAtScalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;// create a color converter for output into rgb for svg fill style&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Validation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;converterFactory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ConverterFactory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CONVERTER_TYPE_COLOR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;convHsl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createConverter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;format&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;rgb&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;// get the starting and ending colors&amp;#39; RGB values into an object&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lowColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;blue&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;toUpperCase&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; 
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lowColorObject&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                        &lt;span class=&quot;nx&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lowColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getRed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; 
+                        &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lowColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getGreen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; 
+                        &lt;span class=&quot;nx&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lowColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getBlue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                      &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;highColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;firebrick&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;toUpperCase&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;           
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;highColorObject&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                         &lt;span class=&quot;nx&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;highColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getRed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+                         &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;highColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getGreen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+                         &lt;span class=&quot;nx&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;highColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getBlue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+                       &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;// figure out the multiplier for the value&amp;#39;s position in the range&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fraction&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;max&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;// create an RGB object with new values using the fraction multiplier&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;scaledColorObject&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lowColorObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fraction&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;highColorObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lowColorObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lowColorObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fraction&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;highColorObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lowColorObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lowColorObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;fraction&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;highColorObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;lowColorObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;// create a Color out of that and return it in rgb() format&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;scaledColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scaledColorObject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;convHsl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;scaledColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+</description>
     </item>
     
     
+    
+    <item>
+      <title>Don&#39;t Forget Your oj.ColorConverter Dependencies</title>
+      <link>http://www.likeahouseafire.com/2018/01/03/dont-forget-ojvalidatation-ojcolor-dependencies/</link>
+      <pubDate>Wed, 03 Jan 2018 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://www.likeahouseafire.com/2018/01/03/dont-forget-ojvalidatation-ojcolor-dependencies</guid>
+      <description>&lt;p&gt;I mess this up every time I try to use it:&lt;/p&gt;
 
+&lt;p&gt;If you’re attempting to leverage the &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/jet/jsdocs/oj.ColorConverter.html&quot;&gt;Oracle JET color converter&lt;/a&gt;, you’ll get these errors in your browser console if you forget the dependencies at the top of your ojModule’s &lt;code&gt;define()&lt;/code&gt; function:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color: red;&quot;&gt;TypeError: Cannot read property &#39;converterFactory&#39; of undefined&lt;/span&gt;
+    // you left out &#39;ojs/ojvalidation&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;or&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color: red;&quot;&gt;TypeError: oj.Color is not a constructor &lt;/span&gt;
+    // you left out &#39;ojs/ojcolor&#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Also, besides including  &lt;code&gt;&#39;ojs/ojvalidation&#39;&lt;/code&gt; and &lt;code&gt;&#39;ojs/ojcolor&#39;&lt;/code&gt;, watch to make sure you perform all the steps:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Create a ConverterFactory of type color&lt;/li&gt;
+  &lt;li&gt;Pass in an options object for the format you want to output and create the converter itself&lt;/li&gt;
+  &lt;li&gt;Make sure the input color is an ojColor object first (see below for a trick for using &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#Color_keywords&quot;&gt;CSS Color Keywords&lt;/a&gt; directly)&lt;/li&gt;
+  &lt;li&gt;Run it through the converter&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;ojs/ojcore&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;knockout&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;jquery&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;ojs/ojvalidation&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;ojs/ojcolor&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ko&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;// Steps 1 &amp;amp; 2 (one time only) &lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Use a factory to create a converter for the output you want &lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Validation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;converterFactory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ConverterFactory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CONVERTER_TYPE_COLOR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;convHsl&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createConverter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;format&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;hsl&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+
+    &lt;span class=&quot;c1&quot;&gt;// Steps 3 &amp;amp; 4&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Create a Color object first, then convert it&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;rgbaOrig&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;rgba(27,128,254,0.8)&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;convertedRgbaColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;convHsl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rgbaOrig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;  
+        &lt;span class=&quot;c1&quot;&gt;// returns &amp;quot;hsla(213, 99%, 55%, 0.8)&amp;quot;&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;hexOrig&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;#fa8072&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;convertedHexColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;convHsl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;hexOrig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// returns &amp;quot;hsl(6, 93%, 71%)&amp;quot; &lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;objectOrig&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;310&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;50&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;convertedObjectColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;convHsl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;objectOrig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; 
+        &lt;span class=&quot;c1&quot;&gt;// returns &amp;quot;hsla(310, 50%, 60%, 0.8)&amp;quot;&lt;/span&gt;
+
+
+
+    &lt;span class=&quot;c1&quot;&gt;// What if you want to use CSS3 color specification strings?&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// Convert it in one fell swoop using object bracket notation&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;//  (but be advised the CSS3 color properties are in ALLCAPS &lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;//   on the oj.Color object): &lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;convertedCSS3str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;convHsl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;deeppink&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;toUpperCase&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()]);&lt;/span&gt;          &lt;span class=&quot;c1&quot;&gt;// returns &amp;quot;hsl(328, 100%, 54%)&amp;quot;&lt;/span&gt;
+
+
+
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here’s a little fun with converters as a bonus:&lt;/p&gt;
+
+&lt;iframe style=&quot;margin-left: -40px; margin-bottom: 50px; width: 680px;&quot; height=&quot;600&quot; src=&quot;//jsfiddle.net/pthaden/pp8fw4ew/embedded/result,js,html,css/&quot; allowpaymentrequest=&quot;&quot; allowfullscreen=&quot;allowfullscreen&quot; frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;
+
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Deliver JET via CDN</title>
+      <link>http://www.likeahouseafire.com/2018/01/01/jet-via-cdn/</link>
+      <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://www.likeahouseafire.com/2018/01/01/jet-via-cdn</guid>
+      <description>&lt;p&gt;While playing with some IoT devices such as the JavaScript-centric &lt;a href=&quot;https://www.sparkfun.com/j5ik&quot;&gt;JohnnyFive Tessel 2 board&lt;/a&gt;, I wanted to deploy some JET code onto the microcontroller to be delivered by the board’s Express Node.js server.  &lt;/p&gt;
+
+&lt;p&gt;In the Tessel tutorial there is &lt;a href=&quot;https://learn.sparkfun.com/tutorials/experiment-guide-for-the-johnny-five-inventors-kit/experiment-10-using-the-bme280&quot;&gt;sample code that uses the JustGage library&lt;/a&gt; to show sensor data streaming via Socket.io. The deployment steps in that tutorial describe how to ship the supporting node_modules over to the Tessel 2 board, but the more you add to your project the heavier the deployment becomes and the longer it takes to copy over.&lt;/p&gt;
+
+&lt;figure class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20180101/justgage-gauges.png&quot; /&gt;&lt;figcaption&gt;Gauges built with JustGage, which is deployed and served by the Node.js Express server&lt;/figcaption&gt;&lt;/figure&gt;
+
+&lt;p&gt;Shipping all of the JET supporting modules and all of their dependencies is a whole lot heavier than only one library like JustGage.  Even if you take steps to whittle down the included JET module bundles or minimize the code that gets copied to &lt;code&gt;web/js/libs/&lt;/code&gt;, it’s still a boatload of code to deploy to the Tessel – especially since it will all simply be served right back to a client and isn’t really needed to be resident on the board.&lt;/p&gt;
+
+&lt;h2 id=&quot;using-a-cdn-instead&quot;&gt;Using a CDN instead&lt;/h2&gt;
+
+&lt;p&gt;The client machine running the JET code doesn’t really care where the Require.js, Knockout, oj, and other supporting code comes from, as long as it gets there fast.  Instead of serving these dependency libraries off of a low-power IoT board like the Tessel, we can rewrite our JET configs and use a content delivery network to serve up all the libraries when our client accesses the app we deploy to our Express server.&lt;/p&gt;
+
+&lt;p&gt;Starting with v4.0.0, &lt;a href=&quot;https://docs.oracle.com/middleware/jet410/jet/developer/GUID-219A636B-0D0B-4A78-975B-0528497A82DD.htm#JETDG-GUID-219A636B-0D0B-4A78-975B-0528497A82DD&quot;&gt;Oracle JET is available via a CDN&lt;/a&gt; and doesn’t have to be running from the same server that delivers your html and js files.&lt;/p&gt;
+
+&lt;p&gt;The instructions in that documentation link are straightforward:  You change the path mappings for Require.js in &lt;code&gt;main.js&lt;/code&gt; and &lt;code&gt;main-release-paths.json&lt;/code&gt; and also point to the hosted Alta stylesheet and Require.js bootstrap in &lt;code&gt;index.html&lt;/code&gt;.  In that same file I also had to remove the &lt;code&gt;&amp;lt;!-- injector:theme --&amp;gt;&lt;/code&gt; comment pair because the build scripts would otherwise try to keep reinserting the local reference to the standard theme’s stylesheet instead of respecting the CDN-hosted Alta stylesheet.&lt;/p&gt;
+
+&lt;h2 id=&quot;deploying-to-a-microcontrollers-nodejs&quot;&gt;Deploying to a microcontroller’s node.js&lt;/h2&gt;
+
+&lt;p&gt;With the CDN-only version of my JET code, I was able to deploy the built &lt;code&gt;index.html&lt;/code&gt;, &lt;code&gt;main.js&lt;/code&gt; and &lt;code&gt;appcontroller.js&lt;/code&gt; files from a &lt;code&gt;ojet create --template=basic&lt;/code&gt; project to be delivered by the Express server running on my Tessel’s node.js.  Per the instructions in the J5IK tutorial, I slipped the assets in an &lt;code&gt;app&lt;/code&gt; folder and mapped it as a static Express route.  But thanks to the CDN there was no need to add the JET dependencies from the &lt;code&gt;node_modules&lt;/code&gt; folder into the &lt;code&gt;.tesselinclude&lt;/code&gt; file.&lt;/p&gt;
+
+&lt;p&gt;This way I “upgraded” the gauges to JET and was able to use websockets to stream the Tessel’s BME280 environmental sensors’ data to the JET visualizations.  The &lt;a href=&quot;https://github.com/pthaden/j5ik-Experiment10&quot;&gt;modified code up on GitHub&lt;/a&gt; also shows how to hook Socket.io into the Require.js framework for JET.&lt;/p&gt;
+
+&lt;figure class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20180101/jet-gauges.png&quot; /&gt;&lt;figcaption&gt;Gauges built with JET&#39;s &lt;code&gt;&amp;lt;oj-status-meter-gauge&amp;gt;&lt;/code&gt;&lt;/figcaption&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;using-the-cdn-for-jsfiddles-and-codepens&quot;&gt;Using the CDN for JSFiddles and CodePens&lt;/h2&gt;
+
+&lt;p&gt;We had to use a similar idea in the past to deploy sample JET code to services such as JSFiddle and CodePen (which don’t have an option to dynamically load JET). &lt;a href=&quot;/2016/09/27/jsfiddle-jet-base-for-2.1.0/&quot;&gt;Back then we set up links to raw GitHub files&lt;/a&gt; as a poor-man’s CDN, but with the official approach available now I’ve rewritten the &lt;a href=&quot;https://codepen.io/pthaden/pen/PEjWyo&quot;&gt;CodePen&lt;/a&gt; and &lt;a href=&quot;https://jsfiddle.net/pthaden/h77Logno/&quot;&gt;JSFiddle&lt;/a&gt; templates and you can fork these to prototype JET ideas or troubleshoot implementation issues.&lt;/p&gt;
+
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Reprise: Using Grunt to Create a WAR file</title>
+      <link>http://www.likeahouseafire.com/2017/08/09/updated-using-grunt-to-create-war-jet3x/</link>
+      <pubDate>Wed, 09 Aug 2017 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://www.likeahouseafire.com/2017/08/09/updated-using-grunt-to-create-war-jet3x</guid>
+      <description>&lt;p&gt;A long time ago, I drafted &lt;a href=&quot;http://likeahouseafire.com/2016/04/22/using-grunt-to-create-war/&quot;&gt;notes on how to tweak Oracle JET’s Grunt configurations to automatically build WAR files&lt;/a&gt;. This was in the days of JET 2.x, so those notes don’t work quite right anymore.  By the time JET 3.0.0 shipped, &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/jet-300/globalSupport-releaseNotes.html#tooling_changes&quot;&gt;major changes&lt;/a&gt; to the Grunt tooling changed the way the &lt;code&gt;grunt serve&lt;/code&gt; and &lt;code&gt;grunt build&lt;/code&gt; commands worked internally.&lt;/p&gt;
+
+&lt;p&gt;In the “old” days, the Oracle JET tooling was a series of Grunt tasks that were run in sequence, such as &lt;code&gt;bowercopy&lt;/code&gt; and &lt;code&gt;uglify&lt;/code&gt;.  These would run in order when you executed a command like &lt;code&gt;grunt build:release&lt;/code&gt;.  But in the current version, these individual commands were replaced with a single npm module named &lt;code&gt;oraclejet-tooling&lt;/code&gt; that runs all of the build or serve steps as a single Grunt task.  Although this task can be configured to act differently, we have to change the the way we extend our build process with additional steps if we want to do something like build an asset for deployment.&lt;/p&gt;
+
+&lt;p&gt;Instead of modifying the tooling’s &lt;code&gt;oraclejet-build&lt;/code&gt; steps, we’ll tack our WAR-creation step on the end of the build task.&lt;/p&gt;
+
+&lt;h2 id=&quot;installing-grunt-war&quot;&gt;Installing grunt-war&lt;/h2&gt;
+
+&lt;p&gt;We’ll use a clean JET 3.2.0 NavBar project as the basis.  If you don’t already have a JET project, scaffold one out at the command line:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;yo oraclejet 320navbar --template&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;navbar&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Change to the project folder and then install the &lt;a href=&quot;https://www.npmjs.com/package/grunt-war&quot;&gt;grunt-war plugin&lt;/a&gt; same as before:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;npm install grunt-war --save-dev&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;creating-scriptsgruntconfigwarjs&quot;&gt;Creating scripts/grunt/config/war.js&lt;/h2&gt;
+
+&lt;p&gt;If you look around in your 3.x project, you’ll see that the &lt;code&gt;/scripts/grunt/&lt;/code&gt; directory is pretty clean as compared to the JET 2.0.0 days.  In fact, there are only two files in the &lt;code&gt;config&lt;/code&gt; directory: &lt;code&gt;oraclejet-build.js&lt;/code&gt; and &lt;code&gt;oraclejet-serve.js&lt;/code&gt;, and both of them are mostly commented out.  These files are the way you configure the behavior of the oraclejet-tooling, the details of which is now hidden away in the &lt;code&gt;node_modules&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;p&gt;But this directory is still the place where we put our configuration for the newly-added &lt;code&gt;grunt-war&lt;/code&gt; module.  As before, since the plugin is named grunt-&lt;strong&gt;war&lt;/strong&gt;, the config file should be named &lt;strong&gt;war&lt;/strong&gt;.js.  Create a file named &lt;code&gt;scripts/grunt/config/war.js&lt;/code&gt;:&lt;/p&gt;
+
+&lt;h4 id=&quot;warjs&quot;&gt;war.js&lt;/h4&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+ 
+  &lt;span class=&quot;cm&quot;&gt;/*&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;   * Build a WAR (web archive) without Maven or the JVM installed.&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;   *&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;   * Template strings in the &amp;lt;%= %&amp;gt; tags are set in the data section of Gruntfile.js,&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;   *  or you can hardcode the strings here instead&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;   */&lt;/span&gt;
+      
+        &lt;span class=&quot;nx&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+          &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;nx&quot;&gt;war_dist_folder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;&amp;lt;%= distdir %&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;      &lt;span class=&quot;cm&quot;&gt;/* Folder to generate the WAR into, set in data section of Gruntfile.js */&lt;/span&gt;
+            &lt;span class=&quot;nx&quot;&gt;war_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;&amp;lt;%= appname %&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;            &lt;span class=&quot;cm&quot;&gt;/* The name for the WAR file (.war will be the extension) */&lt;/span&gt;
+            &lt;span class=&quot;nx&quot;&gt;webxml_webapp_version&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;2.5&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;cm&quot;&gt;/* I needed this older version for JCS-SX */&lt;/span&gt;  
+            &lt;span class=&quot;nx&quot;&gt;war_extras&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;grunt-war-credits.txt&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;This line will appear in the file!\n see http://likeahouseafire.com/2017/08/09/updated-using-grunt-to-create-war-jet3x/ &amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; 
+                          &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filename&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;WEB-INF/weblogic.xml&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;\n&amp;lt;weblogic-web-app xmlns=&amp;quot;http://www.bea.com/ns/weblogic/90&amp;quot; xmlns:j2ee=&amp;quot;http://java.sun.com/xml/ns/j2ee&amp;quot; xmlns:xsi=&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot; xsi:schemaLocation=&amp;quot;http://www.bea.com/ns/weblogic/90 http://www.bea.com/ns/weblogic/90/weblogic-web-app.xsd&amp;quot;&amp;gt;\n  &amp;lt;jsp-descriptor&amp;gt;\n    &amp;lt;keepgenerated&amp;gt;true&amp;lt;/keepgenerated&amp;gt;\n    &amp;lt;debug&amp;gt;true&amp;lt;/debug&amp;gt;\n  &amp;lt;/jsp-descriptor&amp;gt;\n  &amp;lt;context-root&amp;gt;/&amp;lt;%= appname %&amp;gt;&amp;lt;/context-root&amp;gt;\n&amp;lt;/weblogic-web-app&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}],&lt;/span&gt;
+                                          &lt;span class=&quot;cm&quot;&gt;/* the war_extras are extra files to be generated, needed since grunt-war doesn&amp;#39;t create a weblogic.xml */&lt;/span&gt;                                          &lt;span class=&quot;cm&quot;&gt;/* also notice that we&amp;#39;re using the &amp;lt;%= appname %&amp;gt; variable in there */&lt;/span&gt;  
+            &lt;span class=&quot;nx&quot;&gt;webxml_welcome&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;index.html&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;cm&quot;&gt;/* to point web.xml to the default page */&lt;/span&gt;
+            &lt;span class=&quot;nx&quot;&gt;webxml_webapp_extras&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;&amp;lt;login-config /&amp;gt;\n&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;&amp;lt;session-config&amp;gt;\n    &amp;lt;session-timeout&amp;gt;\n    30\n    &amp;lt;/session-timeout&amp;gt;\n&amp;lt;/session-config&amp;gt;\n&amp;#39;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;  
+                                          &lt;span class=&quot;cm&quot;&gt;/* some extra settings for web.xml to work with JCS-SX */&lt;/span&gt;
+
+          &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+          &lt;span class=&quot;nx&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+              &lt;span class=&quot;nx&quot;&gt;expand&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+              &lt;span class=&quot;nx&quot;&gt;cwd&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;&amp;lt;%= appdir %&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;             &lt;span class=&quot;cm&quot;&gt;/* find the source files for the WAR in the /web folder, set in Gruntfile.js */&lt;/span&gt;
+              &lt;span class=&quot;nx&quot;&gt;src&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;**&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+              &lt;span class=&quot;nx&quot;&gt;dest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;&amp;#39;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+          &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+     
+  
+  
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that this code has a bunch of fancy template string variables in &lt;code&gt;&amp;lt;%=  %&amp;gt;&lt;/code&gt; tags.  This is so the WAR filename and context root can be set the same as the project directory name, as well as setting the build directory locations.  We’ll set these variables in the Gruntfile, below.&lt;/p&gt;
+
+&lt;h2 id=&quot;modifying-gruntfilejs&quot;&gt;Modifying Gruntfile.js&lt;/h2&gt;
+
+&lt;p&gt;Before, we added the war task to the build step by modifying a &lt;code&gt;build.js&lt;/code&gt; file, but this doesn’t exist in our project source files anymore because the &lt;code&gt;oraclejet-build&lt;/code&gt; step is encapsulated inside the &lt;code&gt;node_modules&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;p&gt;But we are still OK because we don’t really want to interject our WAR step in the middle of the &lt;code&gt;oraclejet-build&lt;/code&gt; steps; we want it to come at the very end of the flow.  Since this is the case, we can add our war step to the project’s &lt;code&gt;Gruntfile.js&lt;/code&gt;:&lt;/p&gt;
+
+&lt;h4 id=&quot;gruntfilejs&quot;&gt;Gruntfile.js&lt;/h4&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;use strict&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;path&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;load-grunt-config&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;configPath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cwd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;scripts/grunt/config&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;appname&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;basename&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cwd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()),&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// same as project directory name, accessible with &amp;#39;&amp;lt;%= appname %&amp;gt;&amp;#39;&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;appdir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;web&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// accessible with &amp;#39;&amp;lt;%= appdir %&amp;gt;&amp;#39;&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;distdir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;dist&amp;#39;&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// accessible with &amp;#39;&amp;lt;%= distdir %&amp;gt;&amp;#39;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;loadNpmTasks&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;grunt-oraclejet&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;//grunt.loadNpmTasks(&amp;quot;grunt-war&amp;quot;);&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;registerTask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;build&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Public task. Calls oraclejet-build to build the oraclejet application. Can be customized with additional build tasks.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;buildType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;oraclejet&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;buildType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;war&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;registerTask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;serve&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Public task. Calls oraclejet-serve to serve the oraclejet application. Can be customized with additional serve tasks.&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;buildType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;oraclejet&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;serve&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;buildType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt; 
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Note that we simply add our &lt;code&gt;war&lt;/code&gt; task to the end of the array in the “build” &lt;code&gt;registerTask&lt;/code&gt; function:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;grunt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;oraclejet&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;buildType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;war&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Since we want it to happen after the &lt;code&gt;oraclejet-build&lt;/code&gt; task is done, this will work perfect.&lt;/p&gt;
+
+&lt;p&gt;Also note that the template string variables like &lt;code&gt;&amp;lt;%= appname %&amp;gt;&lt;/code&gt; and &lt;code&gt;&amp;lt;%= distdir %&amp;gt;&lt;/code&gt; are set here in the &lt;code&gt;data&lt;/code&gt; section of this file, and that we can use Node.js functions like &lt;code&gt;path.basename()&lt;/code&gt; to dynamically get the name of the directory.  These template strings could be used in other custom Grunt tasks as well.&lt;/p&gt;
+
+&lt;p&gt;This is all we need to update our WAR file scripts.  Run &lt;code&gt;grunt build:release&lt;/code&gt; and you’ll have a WAR file sitting in the &lt;code&gt;/dist&lt;/code&gt; directory, suitable for deploying to JCS.  We could use this same idea to deploy to ACCS or other platforms that need a zipped deployment asset with manifest files by tweaking the settings in the &lt;code&gt;war.js&lt;/code&gt; config file.&lt;/p&gt;
+
+&lt;h2 id=&quot;but-what-if-you-did-want-to-change-the-flow-of-oraclejet-build&quot;&gt;But what if you did want to change the flow of oraclejet-build?&lt;/h2&gt;
+
+&lt;p&gt;With the details of the &lt;code&gt;build&lt;/code&gt; and &lt;code&gt;serve&lt;/code&gt; tasks hidden away in the &lt;code&gt;node_modules&lt;/code&gt; directory, you might think you can’t change their behavior.  But JET makes provision for customizing some of the steps that these two tasks follow.&lt;/p&gt;
+
+&lt;p&gt;See the &lt;a href=&quot;http://docs.oracle.com/middleware/jet320/jet/developer/GUID-ACB7BD4E-BAAC-4A9E-B52A-6B2933CD222C.htm#GUID-35A28E14-A97E-48A6-8C0D-64E9E5DF77AB&quot;&gt;Customize a Web Application’s Grunt Build Behavior&lt;/a&gt; section of the documentation for details on how JET dynamically merges together changes you make to the files &lt;code&gt;scripts/grunt/config/oraclejet-build.js&lt;/code&gt; and &lt;code&gt;oraclejet-serve.js&lt;/code&gt; with its own settings when you run Grunt.  &lt;/p&gt;
+
+&lt;p&gt;Also, you can have a looky-see at the source code in &lt;code&gt;node_modules/oraclejet-tooling&lt;/code&gt;, especially the &lt;code&gt;node_modules/oraclejet-tooling/lib/defaultconfig.js&lt;/code&gt; file, for more insight on how the tooling works.  Just remember not to tweak the files under &lt;code&gt;node_modules&lt;/code&gt; because that defeats the whole idea of a package manager. &lt;/p&gt;
+
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>My Favorite WWDC17 Sessions</title>
+      <link>http://www.likeahouseafire.com/2017/06/12/my-favorite-wwdc17-sessions/</link>
+      <pubDate>Mon, 12 Jun 2017 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://www.likeahouseafire.com/2017/06/12/my-favorite-wwdc17-sessions</guid>
+      <description>&lt;p&gt;Thanks to colleagues who – while much more worthy of the conference – were unable to attend WWDC at the last minute, I got to use their hand-me-down lottery ticket to go to my first Developers Conference in San Jose.  Here are some of my favorite WWDC17 sessions:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://developer.apple.com/wwdc17/203&quot;&gt;Introducing Drag and Drop&lt;/a&gt; — They go deep on this new feature in iOS11 and give an cool demo of all the multi-hand/multi-finger chording techniques&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://developer.apple.com/wwdc17/703&quot;&gt;Introducing Core ML&lt;/a&gt; — Apple is making machine learning something easy to incorporate into apps. So they’re not trying to reinvent the training process, but they are &lt;a href=&quot;http://deepdojo.com/apple-introduces-core-ml&quot;&gt;definitely making consumption of already-trained models as easy as drag-and-drop&lt;/a&gt;.  This session was a good primer on how to incorporate a model in your code&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://developer.apple.com/wwdc17/208&quot;&gt;Natural Language Processing and your Apps&lt;/a&gt; — This session helped me walk thorough how you use NSLinguisticTagger and I got to play around with it in Swift Playgrounds down in the labs&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://developer.apple.com/wwdc17/803&quot;&gt;Designing Sound&lt;/a&gt; — This was a brilliant session with many familiar sounds that showed the power of sound design&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://developer.apple.com/wwdc17/802&quot;&gt;Essential Design Principles&lt;/a&gt; — The design team shared lots of principles, but I really enjoyed the “Design Shorts” sessions where topic after topic were presented for 10 minutes a piece.  Here are some good ones:&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2017/818/&quot;&gt;60 Second Prototyping&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2017/823/&quot;&gt;Designing Glyphs&lt;/a&gt; &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2017/817/&quot;&gt;Rich Notifications&lt;/a&gt; &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2017/815/&quot;&gt;How to Pick a Custom Font&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2017/810&quot;&gt;What’s New in iOS: Wayfinding, Typographic Hierarchy, Contrast&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2017/822/&quot;&gt;App Icon Design&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2017/809&quot;&gt;Communication Between Designers and Engineers&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://developer.apple.com/videos/play/wwdc2017/816/&quot;&gt;Love at First Launch&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://developer.apple.com/wwdc17/110&quot;&gt;Convenience for You is Independence for Me&lt;/a&gt; — &lt;a href=&quot;https://www.youtube.com/watch?v=4PoE9tHg_P0&quot;&gt;The Quadfather&lt;/a&gt; spoke in-person about his experience and the importance of accessibility&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;There are many more video recordings from WWDC17 and previous conferences, and they’re all available in the WWDC app as well.   &lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Install a SSL Certificate Directly onto Java Cloud Service</title>
+      <link>http://www.likeahouseafire.com/2017/05/18/install-ssl-cert-jcs/</link>
+      <pubDate>Thu, 18 May 2017 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://www.likeahouseafire.com/2017/05/18/install-ssl-cert-jcs</guid>
+      <description>&lt;p&gt;When you provision an Oracle Java Cloud Service (JCS) instance, you get a full Weblogic server with a real IP address on the public internet, configured (via Compute Cloud) to listen for http on port 80 and https on port 443. What you don’t get is a DNS entry for your server nor a SSL certificate – you’re responsible for setting these up yourself.&lt;/p&gt;
+
+&lt;p&gt;What this means is when you surf to a https:// flavor of URL for your freshly-created server, your browser will alert you that the demo SSL certificates are invalid:&lt;/p&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20170518/privacy-error-firefox.png&quot; /&gt;&lt;/div&gt;
+
+&lt;p&gt;If this is just a prototype server, maybe you’re alright with clicking through and telling the browser that things are safe.  Putting up with the red line through the &lt;span style=&quot;color: red&quot;&gt;&lt;del&gt;https&lt;/del&gt;&lt;/span&gt;:// in the address bar is not a big deal.  However, we had a need to reconfigure a demo JCS server with real, valid SSL certificates so that we could embed our content inside other servers with valid SSL certs.&lt;/p&gt;
+
+&lt;p&gt;Now &lt;a href=&quot;https://docs.oracle.com/cloud/latest/jcs_gs/JSCUG/GUID-B862044D-A55B-48D3-A3E2-CC2D55A8279B.htm&quot;&gt;there’s an official way to do this properly&lt;/a&gt;, but that process requires a Load Balancer node for each JCS instance each of which consumes an OCPU. In our trial environment, we had a limited quota of OCPUs. Instead of registering our SSL certificates the right way through the Oracle Cloud wizards, the following steps configure the Weblogic server directly with a real SSL certificate:&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#register-your-domain-and-add-dns-entry-for-your-jcs-servers-public-ip&quot;&gt;Register your domain and add DNS entry for your JCS server’s public IP&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#get-ssh-access-to-your-jcs-vm-server&quot;&gt;Get SSH access to your JCS VM server&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#create-a-keystore-and-a-csr&quot;&gt;Create a keystore and a CSR&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#request-and-obtain-a-ssl-certificate&quot;&gt;Request and Obtain a SSL Certificate&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#import-the-certificate-into-your-keystore&quot;&gt;Import the certificate into your keystore&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#configure-weblogic-to-use-the-keystore&quot;&gt;Configure Weblogic to use the keystore&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#test-and-revel-in-your-success&quot;&gt;Test and revel in your success&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Before we begin, I just want to emphasize that this is not the approved way to do SSL on JCS.  While it will get you through in a pinch if all you need is a valid https connection, it is definitely not an official supported configuration.  But hey, JCS is Weblogic underneath, and you might find these are good instructions even if you’re just setting up SSL on an on-premise server.&lt;/p&gt;
+
+&lt;h2 id=&quot;register-your-domain-and-add-dns-entry-for-your-jcs-servers-public-ip&quot;&gt;Register your domain and add DNS entry for your JCS server’s public IP&lt;/h2&gt;
+
+&lt;p&gt;Assuming you don’t already have a corporate domain and the DNS infrastructure in place to support it, the first step is to pick a domain name, register it, and then add a DNS &lt;code&gt;A&lt;/code&gt; record pointing at your JCS server.&lt;/p&gt;
+
+&lt;p&gt;I used &lt;a href=&quot;https://dnsimple.com/&quot;&gt;DNSimple&lt;/a&gt; to register a custom domain name and then added an &lt;code&gt;A&lt;/code&gt; record for my JCS public IP address.&lt;/p&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20170518/dnsimple-a-record.png&quot; /&gt;&lt;/div&gt;
+
+&lt;p&gt;The important thing is that you have access to the email address used for the domain administrator (even if it’s hidden behind Whois privacy protect; that’s fine), since we’ll be using that to verify you own the domain when we register the SSL certificate, below.&lt;/p&gt;
+
+&lt;h2 id=&quot;get-ssh-access-to-your-jcs-vm-server&quot;&gt;Get SSH access to your JCS VM server&lt;/h2&gt;
+
+&lt;p&gt;We’re going to get down in the weeds here so we’ll need &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/tutorials/obe/cloud/javaservice/JCS/JCS_SSH/create_sshkey.html&quot;&gt;shell access to the VM&lt;/a&gt; that the JCS Weblogic server is running on.&lt;/p&gt;
+
+&lt;p&gt;You’ll &lt;a href=&quot;https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html&quot;&gt;need a pair of SSH keys generated&lt;/a&gt; on your computer so that you can upload your public key to the JCS server. &lt;/p&gt;
+
+&lt;p&gt;Navigate to the JCS Service Console and pull down the hamburger menu for your JCS instance. Choose &lt;code&gt;SSH Access&lt;/code&gt; and upload your new SSH Public Key file. This process will reboot the VM that your JCS instance is running on, so make sure you schedule for the outage.&lt;/p&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20170518/ssh-access-keys.png&quot; /&gt;&lt;/div&gt;
+
+&lt;p&gt;After the reboot, if everything worked right, you should be able to &lt;a href=&quot;https://docs.oracle.com/cloud/latest/computecs_common/OCSUG/GUID-D947E2CC-0D4C-43F4-B2A9-A517037D6C11.htm#OCSUG-GUID-D947E2CC-0D4C-43F4-B2A9-A517037D6C11&quot;&gt;use your private .ssh key to access the shell prompt&lt;/a&gt; on your JCS VM. You’ll connect as the &lt;code&gt;opc&lt;/code&gt; user and use the JCS VM’s IP address for the host:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;ssh opc@123.45.67.89&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;create-a-keystore-and-a-csr&quot;&gt;Create a keystore and a CSR&lt;/h2&gt;
+
+&lt;p&gt;Once you’re connected you’re logged in as the &lt;code&gt;opc&lt;/code&gt; user, but that user has very little access to the juicy parts of your Weblogic installation. However, the &lt;code&gt;opc&lt;/code&gt; user does have &lt;code&gt;sudo&lt;/code&gt;, so you can become the &lt;code&gt;oracle&lt;/code&gt; user:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;opc@myjcsserver ~&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;sudo su - oracle&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now you can start setting up the SSL keystores as the &lt;code&gt;oracle&lt;/code&gt; user, and Weblogic will be able to load your certificates because it will have the proper file system permissions.  I sourced the $DOMAIN_HOME environment out of habit:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;-bash-4.1&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; /u01/data/domains/myjcsser_domain/bin
+-bash-4.1&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;./setDomainEnv.sh   &lt;span class=&quot;c&quot;&gt;# source the environment vars for weblogic domain&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Next, you need a place to put the keystore. I stuck mine in a shallow directory I knew I’d remember later when I needed to key it into the Weblogic admin console:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;-bash-4.1&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;mkdir /u01/data/keystores &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$_&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Our final steps for this phase are to create a keystore and then a certificate signing request to send to our SSL provider. First you’ll use &lt;code&gt;keytool&lt;/code&gt; to create a keystore and generate a key pair all at the same time.  Then you’ll used &lt;code&gt;keytool&lt;/code&gt; again to create a certificate signing request (CSR) file.  Last you’ll spool that CSR file to the screen:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;-bash-4.1&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;keytool -genkeypair &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -alias myjcsserver_cert &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -keyalg RSA &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -sigalg SHA256withRSA -keysize &lt;span class=&quot;m&quot;&gt;2048&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -dname &lt;span class=&quot;s2&quot;&gt;&amp;quot;CN=myjcsserver.orclpaas.com,OU=NAA Sales Consulting,O=Oracle Corporation,L=Redwood City,ST=California,C=US&amp;quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -keypass myKEYpwdis#1 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -keystore keystore.jks &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -storepass mySTOREpwdis#1too
+
+-bash-4.1&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;keytool -certreq -v &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -alias myjcsserver_cert &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -file myjcsserver-orclpaas-com_cert.csr &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -keypass myKEYpwdis#1 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -keystore keystore.jks &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -storepass mySTOREpwdis#1too
+
+Certification request stored in file &amp;lt;myjcsserver-orclpaas-com_cert.csr&amp;gt;
+Submit this to your CA
+
+-bash-4.1&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;cat myjcsserver-orclpaas-com_cert.csr
+-----BEGIN NEW CERTIFICATE REQUEST-----
+MIIDDjCCAfYCAQAwgZgxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlh
+MRUwEwYDVQQHEwxSZWR3b29kIENpdHkxGzAZBgNVBAoTEk9yYWNsZSBDb3Jwb3Jh
+dGlvbjEdMBsGA1UECxMUTkFBIFNhbGVzIENvbnN1bHRpbmcxITAfBgNVBAMTGG15
+...blahblahblahthisgoesonforawhile...TYlXaaRcchwNdRgFGzFc5vz5kxh
+RaQ8H4L05gbBxI7RHAhjsZNrO2M2atUFjhhVk08z1ojlqjEKlYCgt6nMYigdFvRF
+VKGnrp6DOGjQ+t9DGpyLZ7xU
+-----END NEW CERTIFICATE REQUEST-----&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The first step will create a new &lt;code&gt;/u01/data/keystores/keystore.jks&lt;/code&gt; file. Use your fully-qualified distinguished name, and make note of the key password and store password, as you’ll need them in later steps and when you configure Weblogic.&lt;/p&gt;
+
+&lt;p&gt;The second step registers a signing request inside the keystore and then creates a CSR file you can use to initiate the process with your certificate authority.  Copy that echoed-out CSR to the clipboard: you’ll need it in the next step when you request your SSL certificate.&lt;/p&gt;
+
+&lt;h2 id=&quot;request-and-obtain-a-ssl-certificate&quot;&gt;Request and Obtain a SSL Certificate&lt;/h2&gt;
+
+&lt;p&gt;There are lots of vendors who will provide trusted SSL certificates to match your DNS domain.  Your company may already have an arrangement with one of these vendors, and you should follow their process if your hostname falls under their DNS.&lt;/p&gt;
+
+&lt;p&gt;Since I created my own DNS domain with DNSimple, at first I attempted to use their SSL Certificates process to broker a cert from Comodo but had a lot of grief with their automated support.  So a better solution for me was to go with &lt;a href=&quot;https://cheapsslsecurity.com/&quot;&gt;Cheap$$L Security&lt;/a&gt; to get a RapidSSL certificate.&lt;/p&gt;
+
+&lt;p&gt;BTW, LetsEncrypt is a newer player on the SSL scene, and their free certificates had great appeal for our prototype project, but the 90-day limit on certificates before they expire and the work it would take to automate the process on the JCS compute node wasn’t worth the hassle compared to a few bucks for a cheap SSL cert, IMHO.&lt;/p&gt;
+
+&lt;p&gt;If you, like me, are managing your own DNS domain you can choose one of the cheapest Domain Validation certificates – especially since this is just for prototyping.  If this were for a production server or for doing eCommerce, you might want to shell out for a Extended Validated so that your users might put more trust in you because they get better feedback in the browsers’ address bars.  Like we said before, these steps are already a hack:  you shouldn’t be following these steps for anything production!&lt;/p&gt;
+
+&lt;p&gt;Another option you might consider, even though it’s more expensive:  if you’re going to do a lot of SSL certificates or be renaming your DNS entries for your prototypes, a wildcard certificate is a lot easier to work with as you don’t have to register each and every DNS hostname with a unique CSR.  However, these steps assume a single-hostname certificate request.&lt;/p&gt;
+
+&lt;p&gt;So click the &lt;a href=&quot;https://cheapsslsecurity.com/rapidssl/rapidsslcertificate.html&quot;&gt;Buy Now button for the RapidSSL Certificate&lt;/a&gt;.  I chose just a one-year cert and added it to my cart. Fill out the order details, press Complete Order, and the next step is to begin the enrollment process by clicking the Begin Now button:&lt;/p&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20170518/purchasemade.png&quot; /&gt;&lt;/div&gt;
+
+&lt;p&gt;Fill in the fields as follows:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Select Your Order Type:  New&lt;/li&gt;
+  &lt;li&gt;Switching from Another SSL Brand?:  No&lt;/li&gt;
+  &lt;li&gt;Choose your Automated Authentication Option:  Email Authentication&lt;/li&gt;
+  &lt;li&gt;Input CSR (Certificate Signing Request):  paste in your certificate request text copied from the JCS VM’s command prompt above&lt;/li&gt;
+  &lt;li&gt;Select Your Server:  Weblogic - all versions&lt;/li&gt;
+  &lt;li&gt;Select the Signature Algorithm:  SHA-2&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20170518/pasteCSR.png&quot; /&gt;&lt;/div&gt;
+
+&lt;p&gt;Click the Continue button.  The server will read your CSR and ask you to confirm the details:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Confirm The Domain You Submitted:  this should be autofilled from the CSR, if the &lt;code&gt;keytool&lt;/code&gt; steps went correctly&lt;/li&gt;
+  &lt;li&gt;Confirm Your Information:  this is the dname embedded in the CSR&lt;/li&gt;
+  &lt;li&gt;Select Approver Email Address:  the emails listed come from the domain you registered above.  I picked the first one which was obscured by whoisprivacyprotect.com.  Remember that you’ll need to have access to the email account so that you can reply to the RapidSSL email verification process&lt;/li&gt;
+  &lt;li&gt;Site Administrator Contact Information:  you need to fill these all in, even if they are the same&lt;/li&gt;
+  &lt;li&gt;Subscriber Agreement:  agree to the terms&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Click Continue.&lt;/p&gt;
+
+&lt;p&gt;The next step will arrive in your inbox.  If it doesn’t come through, you can return to the CheapSSL Security website and check your Incomplete Orders under My Account and reprocess the form.&lt;/p&gt;
+
+&lt;p&gt;You should get an email from sslorders@geotrust.com asking you to click a URL to review and approve the certificate request.  This is how they confirm that you own the domain that you are requesting a certificate for.  Click the link and then click the “I Approve” button on the RapidSSL.com website.&lt;/p&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20170518/rapidsslapproval.png&quot; /&gt;&lt;/div&gt;
+
+&lt;p&gt;The last step will also arrive in your inbox.  The actual certificate will arrive along with an intermediate certificate.  You’ll use these in the next step.&lt;/p&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20170518/emailcertificate.png&quot; /&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;import-the-certificate-into-your-keystore&quot;&gt;Import the certificate into your keystore&lt;/h2&gt;
+
+&lt;p&gt;Return back to the terminal, logged into your JCS VM and switched to the oracle user.  If you need to login and sudo over again, follow the steps above.  Make sure you’re in the &lt;code&gt;/u01/data/keystores&lt;/code&gt; directory.&lt;/p&gt;
+
+&lt;p&gt;We need to get the certificate in your email onto the filesystem of your JCS VM.  There are many ways to do this, but I used vim to paste the contents copied from the email and then saved it into a file.  Just be sure to grab the right certificate for the web server, and copy everything from and including &lt;code&gt;-----BEGIN CERTIFICATE-----
+&lt;/code&gt; to &lt;code&gt;-----END CERTIFICATE-----
+&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;You can use this command line redirect trick to create a file from a paste, remembering to press &lt;code&gt;Ctrl-D&lt;/code&gt; when done to close the file:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;-bash-4.1&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;cat &amp;gt; myjcsserver-orclpaas-com_cert.cer
+-----BEGIN CERTIFICATE-----
+MIIFdDCCBFygAwIBAgIQbSktxL1fUSvI5rVMBVd80DANBgkqhkiG9w0BAQsFADBC
+MQswCQYDVQQGEwJVUzEWMBQGA1UEChMNR2VvVHJ1c3QgSW5jLjEbMBkGA1UEAxMS
+...blahblahblahreallyreallylong...+bu5y+VZTMPisjqqiw/VLZO37jdspK
+Hl5z6sYPcml3AjoPYBOPAyQnpd8h3SVkAxH08TNzr1ZYqwB2WaS7a1Ag6S2g7pTr
+W8nOc8muh5MSVEbsKCp2KeFhiEDf4EG9JR2KkVmPWSikxJd+AGeRSyJyDEbioPCd
+&lt;span class=&quot;nv&quot;&gt;BXVmvVaScvQ&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+-----END CERTIFICATE-----
+
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;**press Ctrl-D, twice &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; you forget to press enter after the last line**&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We need to also create a file for the intermediate certificate for RapidSSL.  Again, copy all of the intermediate cert text including the &lt;code&gt;BEGIN&lt;/code&gt; and &lt;code&gt;END&lt;/code&gt; lines and create a file on the server:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;-bash-4.1&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;cat &amp;gt; intermediate.cer
+-----BEGIN CERTIFICATE-----
+MIIETTCCAzWgAwIBAgIDAjpxMA0GCSqGSIb3DQEBCwUAMEIxCzAJBgNVBAYTAlVTMRYwFAYDVQQK
+Ew1HZW9UcnVzdCBJbmMuMRswGQYDVQQDExJHZW9UcnVzdCBHbG9iYWwgQ0EwHhcNMTMxMjExMjM0
+NTUxWhcNMjIwNTIwMjM0NTUxWjBCMQswCQYDVQQGEwJVUzEWMBQGA1UEChMNR2VvVHJ1c3QgSW5j
+LjEbMBkGA1UEAxMSUmFwaWRTU0wgU0hBMjU2IENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+CgKCAQEAu1jBEgEul9h9GKrIwuWF4hdsYC7JjTEFORoGmFbdVNcRjFlbPbFUrkshhTIWX1SG5tmx
+2GCJa1i+ctqgAEJ2sSdZTM3jutRc2aZ/uyt11UZEvexAXFm33Vmf8Wr3BvzWLxmKlRK6msrVMNI4
+/Bk7WxU7NtBDTdFlodSLwWBBs9ZwF8w5wJwMoD23ESJOztmpetIqYpygC04q18NhWoXdXBC5VD0t
+A/hJ8LySt7ecMcfpuKqCCwW5Mc0IW7siC/acjopVHHZDdvDibvDfqCl158ikh4tq8bsIyTYYZe5Q
+Q7hdctUoOeFTPiUs2itP3YqeUFDgb5rE1RkmiQF1cwmbOwIDAQABo4IBSjCCAUYwHwYDVR0jBBgw
+FoAUwHqYaI2J+6sFZAwRfap9ZbjKzE4wHQYDVR0OBBYEFJfCJ1CewsnsDIgyyHyt4qYBT9pvMBIG
+A1UdEwEB/wQIMAYBAf8CAQAwDgYDVR0PAQH/BAQDAgEGMDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6
+Ly9nMS5zeW1jYi5jb20vY3Jscy9ndGdsb2JhbC5jcmwwLwYIKwYBBQUHAQEEIzAhMB8GCCsGAQUF
+BzABhhNodHRwOi8vZzIuc3ltY2IuY29tMEwGA1UdIARFMEMwQQYKYIZIAYb4RQEHNjAzMDEGCCsG
+AQUFBwIBFiVodHRwOi8vd3d3Lmdlb3RydXN0LmNvbS9yZXNvdXJjZXMvY3BzMCkGA1UdEQQiMCCk
+HjAcMRowGAYDVQQDExFTeW1hbnRlY1BLSS0xLTU2OTANBgkqhkiG9w0BAQsFAAOCAQEANevhiyBW
+lLp6vXmp9uP+bji0MsGj21hWID59xzqxZ2nVeRQb9vrsYPJ5zQoMYIp0TKOTKqDwUX/N6fmS/Zar
+RfViPT9gRlATPSATGC6URq7VIf5Dockj/lPEvxrYrDrK3maXI67T30pNcx9vMaJRBBZqAOv5jUOB
+8FChH6bKOvMoPF9RrNcKRXdLDlJiG9g4UaCSLT+Qbsh+QJ8gRhVd4FB84XavXu0R0y8TubglpK9Y
+Ca81tGJUheNI3rzSkHp6pIQNo0LyUcDUrVNlXWz4Px8G8k/Ll6BKWcZ40egDuYVtLLrhX7atKz4l
+&lt;span class=&quot;nv&quot;&gt;ecWLVtXjCYDqwSfC2Q7sRwrp0Mr82A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;
+-----END CERTIFICATE-----
+
+&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;**press Ctrl-D, again twice &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; you forget to press enter after the last line**&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we have files we can use &lt;code&gt;keytool&lt;/code&gt; to import back into the keystore, and it should match our CSR request from earlier.  &lt;/p&gt;
+
+&lt;p&gt;Let’s import the intermediate cert first:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;-bash-4.1&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;keytool -import &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -trustcacerts &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -alias RapidSSLIntermediate &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -file intermediate.cer &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -keystore keystore.jks &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -storepass mySTOREpwdis#1too
+
+Certificate was added to keystore&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now, import the host certificate and note that it sees it as a reply:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;-bash-4.1&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;keytool -import &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -trustcacerts &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -alias myjcsserver_cert &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -file myjcsserver-orclpaas-com_cert.cer &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -keypass myKEYpwdis#1 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -keystore keystore.jks &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ -storepass mySTOREpwdis#1too
+
+Certificate reply was installed in keystore&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You’ve now got a valid keystore, registered for your DNS hostname and ready to be used by Weblogic.  For fun, you can validate that the certificate chain is valid with this command:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;java -cp /u01/app/oracle/middleware/wlserver/server/lib/weblogic.jar utils.ValidateCertChain -jks myjcsserver_cert keystore.jks
+
+Cert&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;0&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;: &lt;span class=&quot;nv&quot;&gt;CN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;myjcsserver.orclpaas.com
+Cert&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;1&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;: &lt;span class=&quot;nv&quot;&gt;CN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;RapidSSL SHA256 CA,O&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;GeoTrust Inc.,C&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;US
+Cert&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;2&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;: &lt;span class=&quot;nv&quot;&gt;CN&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;GeoTrust Global CA,O&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;GeoTrust Inc.,C&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;US
+Certificate chain appears valid&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;configure-weblogic-to-use-the-keystore&quot;&gt;Configure Weblogic to use the keystore&lt;/h2&gt;
+
+&lt;p&gt;The last step is to reconfigure the Weblogic managed server to use the new keystore settings.  Navigate to the Admin server for your JCS instance and sign in as the weblogic admin user.&lt;/p&gt;
+
+&lt;p&gt;Lock and Edit your domain, then navigate to Environment » Servers » managed server name » Configuration » Keystores tab.&lt;/p&gt;
+
+&lt;p&gt;Set the Keystores tab settings as follows:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Keystores:  Custom Identity and Java Standard Trust&lt;/li&gt;
+  &lt;li&gt;Custom Identity Keystore:  /u01/data/keystores/keystore.jks&lt;/li&gt;
+  &lt;li&gt;Custom Identity Keystore Type:  JKS&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Custom Identity Keystore Passphrase:  mySTOREpwdis#1too&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Java Standard Trust Keystore:  /u01/jdk/jre/lib/security/cacerts&lt;/li&gt;
+  &lt;li&gt;Java Standard Trust Keystore Type:  jks&lt;/li&gt;
+  &lt;li&gt;Java Standard Trust Keystore Passphrase:  changeit  (that is, unless you’ve changed it already)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Save your changes.&lt;/p&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20170518/keystoresadmin.png&quot; /&gt;&lt;/div&gt;
+
+&lt;p&gt;Now click on the SSL tab and set the settings:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Identity and Trust Locations:  Keystores&lt;/li&gt;
+  &lt;li&gt;Private Key Location: from Custom Identity Keystore&lt;/li&gt;
+  &lt;li&gt;Private Key Alias:  myjcsserver_cert&lt;/li&gt;
+  &lt;li&gt;Private Key Passphrase:  myKEYpwdis#1&lt;/li&gt;
+  &lt;li&gt;Certificate Location: from Custom Identity Keystore&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20170518/ssladmin.png&quot; /&gt;&lt;/div&gt;
+
+&lt;p&gt;Click Save and then Activate Your Changes.&lt;/p&gt;
+
+&lt;p&gt;Now even though it says that all changes have been activated and no restarts are necessary, I’ve found that restarting the managed server is needed because it won’t pick up the new keystore.&lt;/p&gt;
+
+&lt;p&gt;Click on the Control tab for the managed server, then check the box next to the managed server.  Pull down Shutdown » Force Shutdown Now and wait a few moments for the task to complete, refreshing as necessary to see progress.  Then click Start to start the managed server back up.&lt;/p&gt;
+
+&lt;h2 id=&quot;test-and-revel-in-your-success&quot;&gt;Test and revel in your success&lt;/h2&gt;
+
+&lt;p&gt;You should now be able to navigate to the https version of your URLs with a valid certificate and a reassuring green lock in the address bar:&lt;/p&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20170518/sslsuccess.png&quot; /&gt;&lt;/div&gt;
+
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>APEX REST: Two Separate SQL Queries, One RESTful Endpoint</title>
+      <link>http://www.likeahouseafire.com/2017/03/08/apex-rest-two-queries-one-endpoint/</link>
+      <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://www.likeahouseafire.com/2017/03/08/apex-rest-two-queries-one-endpoint</guid>
+      <description>&lt;p&gt;Oracle &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/tutorials/obe/db/apex/r51/restful_web_services/restful_web_services.html#section1s1&quot;&gt;APEX RESTful Services are a great way to quickly build an API endpoint&lt;/a&gt;. Upload a spreadsheet of data, create a SQL query, and stick it in a GET request on the Cloud with output as JSON. Boom, done.&lt;/p&gt;
+
+&lt;p&gt;Well, the defaults are &lt;em&gt;alright:&lt;/em&gt; the meat of your sql query is returned in an &lt;code&gt;items: []&lt;/code&gt; array, but it’s not too hard to massage that out in your JavaScript front-end.  And you’ll get the results in batches as driven by the pagination size parameter on your resource handler, so there’s that. &lt;/p&gt;
+
+&lt;p&gt;But sometimes you want to do some manipulating of the payload that gets returned from APEX so that it takes a particular format and doesn’t need parsed on the client side. Or you might want to throw some logic in the code that runs on the server side, perhaps driven by the bind variables you pick up from a request payload or querystring parameter.&lt;/p&gt;
+
+&lt;h2 id=&quot;plsql-to-the-rescue&quot;&gt;PL/SQL to the rescue&lt;/h2&gt;
+
+&lt;p&gt;The APEX RESTful Services UI serves as a pretty wrapper for the power of the &lt;a href=&quot;http://www.oracle.com/technetwork/developer-tools/rest-data-services/overview/index.html&quot;&gt;Oracle RESTful Data Services&lt;/a&gt; engine. As &lt;a href=&quot;https://oracle-base.com/articles/misc/oracle-rest-data-services-ords-create-basic-rest-web-services-using-plsql&quot;&gt;documented on Tim Hall’s ORACLE-BASE&lt;/a&gt;, ORDS lets you do all sorts of cool things if you leverage the right packages. We can take these concepts and stuff them into a APEX RESTful Service, setting our GET Handlers to use PL/SQL for Source Type instead of Query or Query One Row.&lt;/p&gt;
+
+&lt;p&gt;There are lots of ways to use PL/SQL for an APEX RESTful GET Handler, but they all revolve around the ability to write directly out to the wire with your response.  So instead of the automatic JSON formatting you get when you use a SQL Query or Query One Row, with PL/SQL you have to format your output yourself. For example, the APEX HR example Resource Handler uses &lt;code&gt;sys.htp.print()&lt;/code&gt; to output HTML back to the client.&lt;/p&gt;
+
+&lt;p&gt;For my use case below, I was able to combine the ORACLE-BASE suggestion to use &lt;a href=&quot;https://docs.oracle.com/cd/E59726_01/doc.50/e39149/apex_json.htm#AEAPI29635&quot;&gt;the &lt;code&gt;APEX_JSON&lt;/code&gt; package&lt;/a&gt; and some PL/SQL &lt;code&gt;IF THEN ELSE&lt;/code&gt; logic to run one bit of SQL versus another bit depending on the length of the querystring. The &lt;code&gt;APEX_JSON.write()&lt;/code&gt; procedure let me define the root node of my payload as &lt;code&gt;suggestions:&lt;/code&gt; and dispense with the standard format returned by ORDS.&lt;/p&gt;
+
+&lt;h2 id=&quot;use-case-run-one-of-two-separate-sql-queries-depending-on-the-length-of-the-query-parameter&quot;&gt;Use case: Run one of two separate SQL queries depending on the length of the query parameter&lt;/h2&gt;
+
+&lt;p&gt;I had a flat, denormalized spreadsheet of data uploaded into a PRODUCT_MASTER table, but with a two-part key: a sku-prefix and a sku-suffix.  I wanted to create an endpoint I could use for an &lt;a href=&quot;https://github.com/devbridge/jQuery-Autocomplete&quot;&gt;autocomplete plugin&lt;/a&gt; that would send the user-typed characters as a query parameter on the URL (the ‘XXX’ in &lt;code&gt;apex.oracle.com/endpoint?query=XXX&lt;/code&gt;), and it expected to get JSON back in the form:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;&amp;quot;suggestions&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;ss&quot;&gt;&amp;quot;value&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;&amp;quot;Product Description&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;ss&quot;&gt;&amp;quot;data&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;&amp;quot;Product_ID&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+    &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;err&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The issue was that if the querystring included three or fewer characters, I only wanted to search the &lt;code&gt;sku_prefix&lt;/code&gt; column.  But if the querystring was four characters or longer, I wanted to use the first three characters to match the &lt;code&gt;sku_prefix&lt;/code&gt; and the rest of the querystring to match the &lt;code&gt;sku_suffix&lt;/code&gt; column.&lt;/p&gt;
+
+&lt;p&gt;So I needed two queries to be defined, but only one to run.  And some logic to choose which one based on the length of the querystring parameter passed in as a bind variable.  &lt;/p&gt;
+
+&lt;p&gt;The code below is what worked after defining a GET Resource Handler with the URI template: &lt;code&gt;products?query={query}&lt;/code&gt;. &lt;/p&gt;
+
+&lt;p&gt;N.B. See how the column aliases are surrounded by “doublequotes”?  This is so the JSON is in lowercase; otherwise your column names with be UPPERCASED and then your JSON node names will be all shouty.  &lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-sql&quot; data-lang=&quot;sql&quot;&gt;&lt;span class=&quot;k&quot;&gt;DECLARE&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;l_cursor&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SYS_REFCURSOR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;l_querylength&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NUMBER&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;BEGIN&lt;/span&gt; 
+&lt;span class=&quot;n&quot;&gt;l_querylength&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;LENGTH&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;IF&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_querylength&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;THEN&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;OPEN&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_cursor&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FOR&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DISTINCT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sku_prefix&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;: &amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;description_prefix&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;&amp;quot;value&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+      &lt;span class=&quot;n&quot;&gt;sku_prefix&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;&amp;quot;data&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+      &lt;span class=&quot;n&quot;&gt;description_prefix&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;&amp;quot;description_prefix&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;null&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;&amp;quot;description_suffix&amp;quot;&lt;/span&gt;  
+      &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;product_master&lt;/span&gt; 
+      &lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sku_prefix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;like&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;%&amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;%&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;ELSE&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;OPEN&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_cursor&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FOR&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sku_prefix&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sku_suffix&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;: &amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;description_prefix&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;-&amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;description_suffix&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;&amp;quot;value&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+      &lt;span class=&quot;n&quot;&gt;sku_prefix&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sku_suffix&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;&amp;quot;data&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+      &lt;span class=&quot;n&quot;&gt;description_prefix&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;&amp;quot;description_prefix&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;description_suffix&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;&amp;quot;description_suffix&amp;quot;&lt;/span&gt; 
+      &lt;span class=&quot;k&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;product_master&lt;/span&gt; 
+      &lt;span class=&quot;k&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sku_prefix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;like&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;%&amp;#39;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SUBSTR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;%&amp;#39;&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sku_suffix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;like&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SUBSTR&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;%&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;END&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IF&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;APEX_JSON&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;open_object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;APEX_JSON&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;suggestions&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l_cursor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;APEX_JSON&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;close_object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;END&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>How Do You Pronounce &quot;Fat&amp;nbsp;Arrow?&quot;</title>
+      <link>http://www.likeahouseafire.com/2017/02/20/how-pronounce-fat-arrow/</link>
+      <pubDate>Mon, 20 Feb 2017 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://www.likeahouseafire.com/2017/02/20/how-pronounce-fat-arrow</guid>
+      <description>&lt;p&gt;Do you have a little voice in your head that vocalizes the things you read? What do you say when you see the &lt;code&gt;=&amp;gt;&lt;/code&gt; symbol?&lt;/p&gt;
+
+&lt;p&gt;I’ve been playing around a bit with ES6 features, including the new &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions&quot;&gt;“fat arrow” syntax for anonymous functions&lt;/a&gt;.  Lots of Node.js code is written in this style, as are almost all of the Functional Programing tutorials and examples.  It looks something like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;as opposed to this:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;multiply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;I’ll leave it to smarter people to describe all the nuances of the fat arrow syntax, like how convenient it is to pass their shorter syntax in to higher-order functions like &lt;code&gt;map&lt;/code&gt;, &lt;code&gt;filter&lt;/code&gt; and &lt;code&gt;reduce&lt;/code&gt;, how they don’t bind their own &lt;code&gt;this&lt;/code&gt; or have an &lt;code&gt;arguments&lt;/code&gt; object, and how they’re much easier to read when implementing functional-style ideas like currying and such.&lt;/p&gt;
+
+&lt;p&gt;Meanwhile, I realize just because they’re new and shiny doesn’t make them perfect, as &lt;a href=&quot;https://github.com/getify/You-Dont-Know-JS/blob/master/es6%20&amp;amp;%20beyond/fig1.png&quot;&gt;Kyle Simpson points out in a decision flowchart from &lt;em&gt;You Dont Know JS: ES6 &amp;amp; Beyond:&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;https://raw.githubusercontent.com/getify/You-Dont-Know-JS/master/es6%20%26%20beyond/fig1.png&quot; /&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;about-that-voice-in-my-head&quot;&gt;About that voice in my head&lt;/h2&gt;
+
+&lt;p&gt;So when I’m reading code samples to myself, I’m often unsure if I’m using the right word for a particular symbol. Take the equals sign (&lt;code&gt;=&lt;/code&gt;) for example. Depending on how many there are, I read the code and say a different phrase in my head:  &lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;Example symbol usage&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;JavaScript meaning&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Voice in my head&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code&gt;var x = 1;&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;assignment&lt;/td&gt;
+      &lt;td&gt;“variable x is assigned one”&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code&gt;if (x == &quot;1&quot;)...&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;loose equality&lt;/td&gt;
+      &lt;td&gt;“if x is equal to one”&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code&gt;if (x === 1)...&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;strict equality&lt;/td&gt;
+      &lt;td&gt;“if x is really, &lt;em&gt;really&lt;/em&gt; equal to the number one”&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;br /&gt;Now take the function declaration at the top of the article.  Here’s how I’d voice that when reading it to myself:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;Code&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Voice in my head&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code&gt;function multiply(x, y) {&lt;/code&gt;&lt;br /&gt;  &lt;code&gt;return x * y;&lt;/code&gt;&lt;br /&gt;&lt;code&gt;}&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;“function ‘multiply’ takes an x and a y and returns x times y”&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;br /&gt;My problem:  I don’t know what word to use when reading the Fat Arrow syntax:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;Code&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;strong&gt;Voice in my head&lt;/strong&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code&gt;let multiply = (x, y) =&amp;gt; x * y;&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;“let ‘multiply’ be assigned a function that takes an x and a y and…returns?…yields?…maps to?…fat-arrows-on-into?…umm?…”&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;what-people-are-saying&quot;&gt;What people are saying&lt;/h2&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions&quot;&gt;aforelinked MDN article&lt;/a&gt; gives a great discussion on the new syntax, but never actually tells you how it’s read properly.&lt;/p&gt;
+
+&lt;p&gt;So I’ve been on a mission to find the right way to say JavaScript’s &lt;code&gt;=&amp;gt;&lt;/code&gt; symbol out loud.&lt;/p&gt;
+
+&lt;p&gt;Other languages have had arrow functions for a while, and someone asked &lt;a href=&quot;http://stackoverflow.com/questions/274022/how-do-i-pronounce-as-used-in-lambda-expressions-in-net&quot;&gt;How do I pronounce “=&amp;gt;” as used in lambda expressions in .Net&lt;/a&gt;. Answers came back as ‘such that’, ‘goes to’, ‘becomes’, ‘lambda-of’, ‘maps-to’ and simply ‘to’.&lt;/p&gt;
+
+&lt;p&gt;Slightly related to where I think the fat arrow is coming from, Wikipedia’s &lt;a href=&quot;https://en.wikipedia.org/wiki/Lambda_calculus#Motivation&quot;&gt;Lambda Calculus article&lt;/a&gt; parenthetically says a bit of MathML should be “read as ‘the pair of x and y &lt;em&gt;is mapped to&lt;/em&gt; x^2 + y^2’.”  Which then if you look at the symbols embedded in that article and then start googling around, winds you back at Wikipedia at an &lt;a href=&quot;https://en.wikipedia.org/wiki/→&quot;&gt;article with nothing but the symbol “→” in its URL&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Douglas Crockford doesn’t give a pronunciation for the symbol, but has decided to &lt;a href=&quot;https://plus.google.com/+DouglasCrockfordEsq/posts/TxQ4gRkZxST&quot;&gt;name fat arrow functions “farts”&lt;/a&gt; and &lt;a href=&quot;http://jslint.com/help.html&quot;&gt;&lt;code&gt;=&amp;gt;&lt;/code&gt; the fart operator&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Meanwhile, I stumbled on a &lt;a href=&quot;https://youtu.be/XcS-LdEBUkE?t=4m18s&quot;&gt;video where James Coglan says&lt;/a&gt; CoffeeScript’s thin-arrow symbol is read as ‘takes…and returns’ but also can be read as ‘from…to’ when he says: “map takes a function from [a] to [b]… and returns a list of [b]’s”.&lt;/p&gt;
+
+&lt;p&gt;And the response to the question &lt;a href=&quot;http://softwareengineering.stackexchange.com/questions/324656/how-to-read-arrow-functions-in-es6&quot;&gt;“How to ‘read’ arrow functions in ES6?”&lt;/a&gt; gets oh-so-close, but when it says “and returns” seems to me to be talking about the structure of the function (especially the old ES5 style) and not the way you’d read the code itself.&lt;/p&gt;
+
+&lt;p&gt;Have you heard an official way to pronounce &lt;code&gt;=&amp;gt;&lt;/code&gt; when reading JavaScript code?  How do you say it?&lt;/p&gt;
+
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>When `yum groupinstall` Says Group Does Not Exist</title>
+      <link>http://www.likeahouseafire.com/2016/12/22/linux-groupinstall-group-not-exist/</link>
+      <pubDate>Thu, 22 Dec 2016 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://www.likeahouseafire.com/2016/12/22/linux-groupinstall-group-not-exist</guid>
+      <description>&lt;p&gt;We’ve got some Linux VMs that point at a private set of repositories for Yum updates.  Recently I went to build an system and wanted to add a graphical desktop.  When I executed &lt;code&gt;yum groupinstall Desktop&lt;/code&gt; this error came back:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Warning: Group Desktop does not exist.
+Error: No packages in any requested group available to install or update&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Turns out it’s &lt;a href=&quot;http://unix.stackexchange.com/questions/118394/local-yum-repository-with-grouplist-not-working&quot;&gt;not uncommon to have private repos that haven’t had their groups created&lt;/a&gt;. Sure enough, a &lt;code&gt;yum grouplist&lt;/code&gt; showed no groups available:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Error: No group data available &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; configured repositories&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The problem here is: I don’t own the repos and can’t update their configuration with groups, and our policy is that I couldn’t just add another external repo for the VM to use.  But, something I &lt;em&gt;did&lt;/em&gt; have access to was another Linux VM whose repos pointed to the standard Unbreakable Linux Network.&lt;/p&gt;
+
+&lt;p&gt;On that machine, I could list out all the components of the &lt;code&gt;Desktop&lt;/code&gt; group with the &lt;code&gt;yum groupinfo&lt;/code&gt; command:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;yum groupinfo Desktop
+
+...
+
+Group: Desktop
+ Description: A minimal desktop that can also be used as a thin client.
+ Mandatory Packages:
+   NetworkManager
+   NetworkManager-gnome
+   alsa-plugins-pulseaudio
+   at-spi
+   control-center
+   dbus
+   gdm
+   gdm-user-switch-applet
+   gnome-panel
+   gnome-power-manager
+   gnome-screensaver
+   gnome-session
+   gnome-terminal
+   gvfs-archive
+   gvfs-fuse
+   gvfs-smb
+   metacity
+   nautilus
+   notification-daemon
+   polkit-gnome
+   xdg-user-dirs-gtk
+   yelp
+ Default Packages:
+   control-center-extra
+   eog
+   gdm-plugin-fingerprint
+   gnome-applets
+   gnome-media
+   gnome-packagekit
+   gnome-vfs2-smb
+   gok
+   openssh-askpass
+   orca
+   pulseaudio-module-gconf
+   pulseaudio-module-x11
+   rhn-setup-gnome
+   vino
+ Optional Packages:
+   sabayon-apply
+   tigervnc-server
+   xguest&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Usually a &lt;code&gt;yum groupinstall&lt;/code&gt; grabs &lt;a href=&quot;http://sapiengames.com/2014/05/18/install-optional-packages-yum-groupinstall-command/&quot;&gt;just the Mandatory and Default Packages&lt;/a&gt; and installs them all in turn. Copying and pasting this list of packages into a editor made it easy to multi-select the CR/LF and tabs and replace them with a single space.  Then it was easy to create a “non-group” install command:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;yum install -y NetworkManager NetworkManager-gnome alsa-plugins-pulseaudio at-spi control-center dbus gdm gdm-user-switch-applet gnome-panel gnome-power-manager gnome-screensaver gnome-session gnome-terminal gvfs-archive gvfs-fuse gvfs-smb metacity nautilus notification-daemon polkit-gnome xdg-user-dirs-gtk yelp control-center-extra eog gdm-plugin-fingerprint gnome-applets gnome-media gnome-packagekit gnome-vfs2-smb gok openssh-askpass orca pulseaudio-module-gconf pulseaudio-module-x11 rhn-setup-gnome vino&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This worked great because all those packages were in my private repo; it was only the group definitions that were missing. Once I ran that big command (and a few more for the other groups I wanted to install), my VM was running a GUI login just fine.&lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Return a Promise from handleActivated for Data-bound ojModules</title>
+      <link>http://www.likeahouseafire.com/2016/12/12/return-a-promise-from-handleactivated/</link>
+      <pubDate>Mon, 12 Dec 2016 00:00:00 +0000</pubDate>
+      <author></author>
+      <guid>http://www.likeahouseafire.com/2016/12/12/return-a-promise-from-handleactivated</guid>
+      <description>&lt;p&gt;In a &lt;a href=&quot;http://likeahouseafire.com/2016/12/09/ojmodule-lifecycle-functions/&quot;&gt;recent post we talked up the ojModule life cycle&lt;/a&gt; and the function hooks that run at various points while a module is being brought in or dismissed. One of those hooks can be used to load data from an external source and have the module wait to build its view until the data has arrived.&lt;/p&gt;
+
+&lt;h2 id=&quot;ojmodule-life-cycle-recap&quot;&gt;ojModule life cycle recap&lt;/h2&gt;
+
+&lt;p&gt;The &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/jet/jetCookbook.html?component=ojModule&amp;amp;demo=simpleNavigation&quot;&gt;ojModule component&lt;/a&gt; is a foundational part of Oracle JET that works hand-in-hand with the &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/jet/jetCookbook.html?component=router&amp;amp;demo=simple&quot;&gt;ojRouter&lt;/a&gt;.  ojModules make up the “pages” in single-page apps that the Yeoman templates generate like &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/jet/public_samples/JET-Template-Web-NavDrawer/public_html/index.html&quot;&gt;NavDrawer&lt;/a&gt; and &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/jet/public_samples/JET-Template-Web-NavBar/public_html/index.html&quot;&gt;NavBar&lt;/a&gt;, or they can even be subcomponents &lt;a href=&quot;http://likeahouseafire.com/2016/01/23/modules-are-your-friends/&quot;&gt;like the panels of an ojTrain’s&lt;/a&gt; “in-page” component.&lt;/p&gt;
+
+&lt;p&gt;Thanks to the &lt;a href=&quot;https://docs.oracle.com/middleware/jet202/jet/developer/GUID-ABB82BD1-9B65-44D2-AE43-81A0A3A44453.htm#JETDG-GUID-ABB82BD1-9B65-44D2-AE43-81A0A3A44453&quot;&gt;module life cycle&lt;/a&gt;, ojModules have a neat trick if you want to load them up with fetched data. Normally a call to a data endpoint won’t return in time before the DOM starts generating, or at least you can’t rely on it to do so since it’s an async call. If you have observables waiting for the data you have to play tricks:  like &lt;a href=&quot;http://jsjim.blogspot.com/2016/04/help-im-using-asynchronous-javascript.html&quot;&gt;setting a flag to hide the data-bound components&lt;/a&gt; in the HTML view until the data is ready; or, doing all the viewModel work &lt;a href=&quot;https://blogs.oracle.com/geertjan/entry/simple_json_and_oracle_jet&quot;&gt;in a callback function that follows after your data is ready&lt;/a&gt;; or, &lt;a href=&quot;https://community.oracle.com/message/13781951#13781951&quot;&gt;calling valueHasMutated() on an observableArray to wake it up&lt;/a&gt; and have it refresh the HTML after the data arrives.&lt;/p&gt;
+
+&lt;h2 id=&quot;handleactivated-to-the-rescue&quot;&gt;handleActivated to the rescue&lt;/h2&gt;
+
+&lt;p&gt;When you use the Yeoman generator to build a NavBar or NavDrawer app, you’ll see this code in the generated viewModels:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;cm&quot;&gt;/**&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;* Optional ViewModel method invoked when this ViewModel is about to be&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;* used for the View transition.  The application can put data fetch logic&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;* here that can return a Promise which will delay the handleAttached function&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;* call below until the Promise is resolved.&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;* @param {Object} info - An object with the following key-value pairs:&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;* @param {Node} info.element - DOM element or where the binding is attached. This may be a &amp;#39;virtual&amp;#39; element (comment node).&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;* @param {Function} info.valueAccessor - The binding&amp;#39;s value accessor.&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;* @return {Promise|undefined} - If the callback returns a Promise, the next phase (attaching DOM) will be delayed until&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;* the promise is resolved&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;*/&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handleActivated&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// Implement if needed&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;It’s this line in the comment that interests us: &lt;em&gt;“put data fetch logic here that can return a Promise which will delay the handleAttached function call below until the Promise is resolved.”&lt;/em&gt; So if we want to hold off on rendering the DOM until our data arrives, we can use this hook and pause the rendering until we have data.&lt;/p&gt;
+
+&lt;p&gt;When would we want to do that? Not necessarily for table data: there’s no need to delay the DOM since we can data-bind to a collection and the table will show a “fetching data” message until the data comes back. Most of the other data-bound JET components also gracefully take data updates and dynamically re-render just fine.&lt;/p&gt;
+
+&lt;p&gt;But there are other times when you &lt;em&gt;do&lt;/em&gt; want to delay the DOM. Perhaps you don’t want users staring at unpopulated form data fields.  You might need to manipulate the returned data before rendering any of it in the browser, or perhaps need to have the data in-hand to determine the layout of the module. Another example: on a form-centric project we had combo boxes with &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/jet/jetCookbook.html?component=combobox&amp;amp;demo=optionsBinding&quot;&gt;options binding&lt;/a&gt; that got their valid lists-of-values from REST APIs, and we didn’t want the combo boxes to be empty during that brief moment while waiting for the ajax calls to come back from the server.&lt;/p&gt;
+
+&lt;h2 id=&quot;fixing-a-filmstrip-with-remote-data&quot;&gt;Fixing a Filmstrip with remote data&lt;/h2&gt;
+
+&lt;p&gt;Or how about a JET component that won’t render right without the proper data in-place before the DOM is built? Take the &lt;a href=&quot;http://www.oracle.com/webfolder/technetwork/jet/jetCookbook.html?component=filmStrip&amp;amp;demo=filmStripNavArrows&quot;&gt;Film Strip&lt;/a&gt; as an example. If the data that backs the &lt;code&gt;&amp;lt;!-- ko foreach: --&amp;gt;&lt;/code&gt; loop isn’t available when the DOM is rendering, the filmstrip will be laid out as if there were no items in the strip. When the data arrives a few hundred milliseconds later, the filmstrip will then try to jam them all in there and the layout will look horrible:&lt;/p&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20161212/jammed-up-after-data-arrived-too-late.png&quot; /&gt;&lt;/div&gt;
+
+&lt;p&gt;But if we just delay the DOM rendering with a &lt;code&gt;Promise&lt;/code&gt; and the &lt;code&gt;handleActivated&lt;/code&gt; function, we give our filmstrip a chance to see data exists in the observableArray before the view iterates over the &lt;code&gt;forEach&lt;/code&gt;, and thus it renders properly:&lt;/p&gt;
+
+&lt;div class=&quot;full zoomable&quot;&gt;&lt;img src=&quot;/images/20161212/ahh-thats-better-waiting-on-a-promise-to-render.png&quot; /&gt;&lt;/div&gt;
+
+&lt;p&gt;Here’s the trick: we put the call to retrieve the data from the remote REST endpoint into the &lt;code&gt;handleActivated&lt;/code&gt; function, but we also wrap it in a &lt;code&gt;new Promise()&lt;/code&gt; and return the whole kit and caboodle. The ojModule then knows to delay the DOM rendering until the promise resolves, and so the ojFilmStrip waits for our data.&lt;/p&gt;
+
+&lt;p&gt;Here’s the code for the viewModel and view:&lt;/p&gt;
+
+&lt;h4 id=&quot;filmstripjs&quot;&gt;filmstrip.js&lt;/h4&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;nx&quot;&gt;define&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;ojs/ojcore&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;knockout&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;jquery&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+         &lt;span class=&quot;s1&quot;&gt;&amp;#39;ojs/ojknockout&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;ojs/ojfilmstrip&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;oj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ko&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;FilmStripViewModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+    &lt;span class=&quot;nx&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;users&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ko&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;observableArray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;      
+      
+&lt;span class=&quot;cm&quot;&gt;/*  This won&amp;#39;t work, because the data comes back too late for the view to pass&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//   it to the ojFilmStrip it in the ko.forEach&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//    $.ajax({&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//        url: &amp;#39;https://jsonplaceholder.typicode.com/users&amp;#39;,&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//        method: &amp;#39;GET&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//      }).then(function(data) {&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//  &lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//          data.forEach(function(user){&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//          self.users.push(user);&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//        });&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//    });&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;*/&lt;/span&gt;
+   
+  
+    &lt;span class=&quot;nx&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handleActivated&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;info&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Promise&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;resolve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;reject&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+
+&lt;span class=&quot;cm&quot;&gt;/*    This works great, because the ojModule waits to build the view until&lt;/span&gt;
+&lt;span class=&quot;cm&quot;&gt;//     the promise resolves */&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ajax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+          &lt;span class=&quot;nx&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;https://jsonplaceholder.typicode.com/users&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+          &lt;span class=&quot;nx&quot;&gt;method&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;GET&amp;#39;&lt;/span&gt;
+          &lt;span class=&quot;p&quot;&gt;}).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;forEach&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+              &lt;span class=&quot;nx&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;users&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+            &lt;span class=&quot;nx&quot;&gt;resolve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+
+      &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+        
+    &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;    
+
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;FilmStripViewModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;filmstriphtml&quot;&gt;filmstrip.html&lt;/h4&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-js&quot; data-lang=&quot;js&quot;&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;h1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Filmstrip&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;/h1&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;div&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;filmstrip-navarrows-example&amp;quot;&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;oj-flex oj-sm-justify-content-center&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+
+  &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;div&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;filmStripDiv&amp;quot;&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;oj-panel oj-flex-item&amp;quot;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;style&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;margin: 20px; max-width: 450px&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;div&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;filmStrip&amp;quot;&lt;/span&gt; 
+         &lt;span class=&quot;nx&quot;&gt;aria&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;label&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;Set of users from REST API&amp;quot;&lt;/span&gt; 
+         &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;bind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;ojComponent: {&lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;           component: &amp;#39;ojFilmStrip&amp;#39;, &lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;           arrowPlacement: &amp;#39;adjacent&amp;#39;, &lt;/span&gt;
+&lt;span class=&quot;s2&quot;&gt;           arrowVisibility: &amp;#39;auto&amp;#39; }&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;c&quot;&gt;&amp;lt;!--&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ko&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;foreach&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;users&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;div&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;oj-panel oj-panel-alt2 demo-filmstrip-item&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;span&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;bind&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;text: name&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;/span&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;/div&amp;gt;&lt;/span&gt;
+      &lt;span class=&quot;c&quot;&gt;&amp;lt;!--&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ko&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;/div&amp;gt;&amp;lt;!-- end filmStrip --&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;/div&amp;gt; &amp;lt;!-- end filmStripDiv --&amp;gt;&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;/div&amp;gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+</description>
+    </item>
+    
+    
   </channel> 
 </rss>

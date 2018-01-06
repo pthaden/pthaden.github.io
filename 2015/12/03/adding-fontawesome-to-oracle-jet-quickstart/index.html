@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adding FontAwesome to Oracle JET QuickStart &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Adding FontAwesome to Oracle JET QuickStart ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2015/12/03/adding-fontawesome-to-oracle-jet-quickstart/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Adding FontAwesome to Oracle JET QuickStart "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2015/12/03/adding-fontawesome-to-oracle-jet-quickstart/"/>
+    
+    
+    <meta property="og:description" content="Getting cute pictures in your menubar and support for icon fonts"/>
+    <meta name="description" content="Getting cute pictures in your menubar and support for icon fonts"/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2015-03-December" title="December 03, 2015">December 03, 2015</time>
+            </div>
+            <h1 class="title">Adding FontAwesome to Oracle JET QuickStart</h1>
+            </header>
+
+        <section>
+            <p>NetBeans 8.1 has a <a href="https://blogs.oracle.com/geertjan/entry/available_oracle_jet_plugin_for">plugin for Oracle JET</a> that makes it absolutely simple to create a project modeled off the Oracle JET QuickStart template. Just choose <kbd>File &gt;&gt; New Project... &gt;&gt; HTML5/JavaScript &gt;&gt; Oracle JET QuickStart Basic</kbd>. Give it a name and a location, click <kbd><kbd>Finish</kbd></kbd>, then click the <kbd>Run Project</kbd> button. </p>
+
+<p>You should be looking at a three-column, responsive, single-page app with a menubar that swaps out the content in the middle mainContent area. Notice those icons on the menubar for Home, People, Library, etc.:</p>
+
+<div class="full zoomable"><img src="/images/20151203/menubar.png" /></div>
+
+<p>Those icons come from a custom font named <code>App_iconfont.woff</code> in the <code>/css/fonts/</code> directory. If you open that font up, you’ll find that it only includes about 10 custom glyphs. What if you need different icons in your menubar?</p>
+
+<p>We can add the awesome <a href="https://fortawesome.github.io/Font-Awesome/icons/">FontAwesome project</a> to our QuickStart project and use their myriad of icons in our own menubar.</p>
+
+<h2 id="get-the-fontawesome-files">Get the FontAwesome files</h2>
+
+<p>First download the latest zip file from the <a href="https://fortawesome.github.io/Font-Awesome/#modal-download">main FontAwesome page</a>. I’m using version 4.5.0 for this lab.</p>
+
+<p>Unzip this file and then pluck out the resources to copy into your JET QuickStart folder hierarchy. Copy the font files in  <code>font-awesome-4.5.0/fonts/</code> to <code>JETQuickStart/css/fonts/</code>. Next, copy the CSS files in <code>font-awesome-4.5.0/css</code> to a newly-created directory at <code>JETQuickStart/css/libs/fa/</code>. Your project should look like this in NetBeans:</p>
+
+<div class="full zoomable"><img src="/images/20151203/projectfiles.png" /></div>
+
+<h2 id="modify-the-css-to-match-oraclejet">Modify the CSS to match OracleJET</h2>
+
+<p>We need to tweak the FontAwesome CSS files to point to the proper locations in your project.</p>
+
+<p>Open the <code>JETQuickStart/css/libs/fa/font-awesome.css</code> in NetBeans. Do an <kbd>Edit &gt;&gt; Replace...</kbd> and search for the text <code>../fonts/fontawesome</code>, replacing it with the text <code>../../fonts/fontawesome</code>. You should get 6 hits. Click <kbd>Replace All</kbd>.</p>
+
+<p>Now do the same for the minified version of the file <code>JETQuickStart/css/libs/fa/font-awesome.min.css</code>. If you open it right away in NetBeans, it will remember your Find/Replace strings and you can just click <kbd>Replace All</kbd> again.</p>
+
+<p>Close and save both files. </p>
+
+<p>This points the FontAwesome stylesheets in the right direction to find the actual font files in your project structure.</p>
+
+<h2 id="link-everything-into-your-project">Link everything into your project</h2>
+
+<p>Now we need to tell the QuickStart project about the FontAwesome CSS files. </p>
+
+<p>Open the <code>index.html</code> file out of the Site Root by double-clicking on it. Find the line in the <code>&lt;head&gt;</code> section just above the <code>override.css</code> line (line 32 in my file). This is where we will insert the reference to the FontAwesome CSS file.</p>
+
+<p>The easiest way is to grab the <code>font-awesome.min.css</code> file in the Projects hierarchy with the mouse and drag it to the blank line you want to add it into. NetBeans will create the proper <code>&lt;link ... &gt;</code> tag for you. You can add spacing and a comment if you like.</p>
+
+<div class="full zoomable"><img src="/images/20151203/newcss.png" /></div>
+
+<h2 id="modify-the-icons-in-your-menubar-code">Modify the icons in your menubar code</h2>
+
+<p>Everything is in place to use the FontAwesome icons. Now we just need to know what style classes to use and where to put them.</p>
+
+<p>If you are looking to swap out the menubar icons in the QuickStart project, you’ll find the icon style classes are defined in the <code>js/modules/header.js</code> viewmodel. See down in the <code>appNavData</code> definition (lines 92-117) that each menu entry is represented by an object, and each of those objects has a key for <code>iconClass:</code> which is a string that gets passed into the header template and used for the icon styling.</p>
+
+<p>The first entry in that <code>iconClass:</code> string takes the form <code>demo-xxxxx-icon-24</code> (you can find the CSS that defines these classes in the <code>css/demo-alta-patterns-min</code> file). We’re going to replace that portion of the style with FontAwesome style references.</p>
+
+<p>You can pick the icon you want by <a href="https://fortawesome.github.io/Font-Awesome/icons/">perusing the FontAwesome cheatsheet</a>. Drill down on your favorite icon and notice that the class names take the format <code>fa-iconname</code>. We also need to add the <code>fa</code> class to the mix, and I’ve found that playing with the sizes is necessary: I needed <code>fa-lg</code> to make things look right in the QuickStart menubar. </p>
+
+<p>So to swap out the People tab’s icon for something else, remove the <code>demo-education-icon-24</code> from  line 101 of the <code>header.js</code> and replace it with <code>fa fa-users fa-lg</code>:</p>
+
+<div class="full zoomable"><img src="/images/20151203/newpeoplestyle.png" /></div>
+
+<h2 id="revel-in-your-new-icons">Revel in your new icons</h2>
+
+<p>You’re now using the FontAwesome icons in your menubar for the People tab:</p>
+
+<div class="full zoomable"><img src="/images/20151203/newmenubar.png" /></div>
+
+<p>You can now use FontAwesome styles anywhere in your view templates or even build up the same convention as in the QuickStart’s <code>header.js</code> and <code>header.tmpl.html</code> files by passing them in as data-bound elements. </p>
+
+<p>Or if you’re really handy with fonts, you could make your own custom gylphs and set them up similar to the way the QuickStart did, with only the few gylphs you want to include instead of the big FontAwesome files.</p>
+
+
+            
+            <div class="tags">
+<a href="/tag/Oracle JET">Oracle JET</a>
+<a href="/tag/Dev">Dev</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Adding FontAwesome to Oracle JET QuickStart" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2015/11/23/learning-knockout-js/">&laquo; Learning Knockout.js</a> 
+                 
+                 
+                    <a class="next-post" href="/2015/12/12/sample-oraclejet-codebases/">Sample OracleJET Codebases In the Wild &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

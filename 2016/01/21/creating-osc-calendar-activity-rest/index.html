@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creating Oracle Sales Cloud Calendar Activities Via APEX REST Calls &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Creating Oracle Sales Cloud Calendar Activities Via APEX REST Calls ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2016/01/21/creating-osc-calendar-activity-rest/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Creating Oracle Sales Cloud Calendar Activities Via APEX REST Calls "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2016/01/21/creating-osc-calendar-activity-rest/"/>
+    
+    
+    <meta property="og:description" content="Notes gleaned from building APEX RESTful calls into Fusion"/>
+    <meta name="description" content="Notes gleaned from building APEX RESTful calls into Fusion"/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2016-21-January" title="January 21, 2016">January 21, 2016</time>
+            </div>
+            <h1 class="title">Creating Oracle Sales Cloud Calendar Activities Via APEX REST Calls</h1>
+            </header>
+
+        <section>
+            <p>Recently I used Application Express 5.0’s “Group Calendar” packaged app to simulate a scheduling system.  We wanted to show how external systems can be launched from within Sales Cloud and then turn around and create meeting appointments via RESTful web service calls back into Fusion, and the packaged app was the quickest way to prototype a 3rd-party “scheduling” system that can make REST calls. </p>
+
+<p>I hijacked the Create Event button procedure that already existed in this packaged app, adding functionality to have the Fusion APIs create a corresponding meeting in Sales Cloud and attaching a contact to the appointment.</p>
+
+<p>Here are some random notes picked up during this assignment for refining on future projects:</p>
+
+<p>(tl;dr:  you can use APEX to do cool REST calls and query/create via Fusion APIs)</p>
+
+<ul id="markdown-toc">
+  <li><a href="#r10-restful-documentation">R10 RESTful documentation</a></li>
+  <li><a href="#using-apex-to-make-the-restful-calls">Using APEX to make the RESTful calls</a></li>
+  <li><a href="#tests-tooling">Tests Tooling</a></li>
+  <li><a href="#headers-for-your-rest-calls">Headers for Your REST calls</a></li>
+  <li><a href="#activities-are-different">Activities are different</a></li>
+  <li><a href="#whittle-down-your-response-payload">Whittle down your response payload</a></li>
+  <li><a href="#watch-out-for-too-huge-responses-in-apex">Watch out for too-huge responses in APEX</a></li>
+  <li><a href="#adding-contacts-to-a-meeting-are-a-two-phase-rest-call">Adding Contacts to a meeting are a two-phase REST call</a></li>
+  <li><a href="#apex-will-let-you-do-random-gets">APEX will let you do random GETs</a></li>
+  <li><a href="#mirroring-the-existing-apex-code">Mirroring the existing APEX code</a></li>
+</ul>
+
+<h2 id="r10-restful-documentation">R10 RESTful documentation</h2>
+<p>The new <a href="https://docs.oracle.com/cloud/latest/salescs_gs/FAAPS/api-Activities.html">R10 RESTful APIs are documented</a> in a fancy new format, as opposed to the SOAP API format that is <a href="https://fusionappsoer.oracle.com/oer/index.jsp">available in the OER</a>.</p>
+
+<p>There are <a href="https://blogs.oracle.com/fadevrel/entry/r10_sales_rest_api_concepts">really good R10 RESTful API intro write-ups</a> on the FADevRel blog. There are also some <a href="https://blogs.oracle.com/fadevrel/tags/apex">older articles on integrating to Fusion with APEX</a>, and although the Fusion blog entries are mostly SOAP-oriented there is at least one newer one about <a href="https://blogs.oracle.com/fadevrel/entry/integrating_with_fusion_application_using18">creating a REST request in PL/SQL</a> (albeit not to Fusion; read on for that!).</p>
+
+<p>And there’s the monstrously-large <a href="https://support.oracle.com/epmos/faces/DocContentDisplay?id=1981941.1">Oracle Sales Cloud
+Using RESTful Web Services</a> whitepaper available on MOS.</p>
+
+<h2 id="using-apex-to-make-the-restful-calls">Using APEX to make the RESTful calls</h2>
+<p>I used <a href="https://docs.oracle.com/database/121/AEAPI/apex_web_service.htm#AEAPI1955"><code>apex_web_service.make_rest_request</code></a> to send my requests back to Sales Cloud from a PL/SQL package so that it would fit in with the existing scaffolding in the packaged app. I originally wanted to model the Fusion RESTful APIs as <a href="http://www.oracle.com/webfolder/technetwork/tutorials/obe/db/apex/r50/Restful%20Services/restful_services.html#section2">Web Service References in Application Express</a> and even got the Fusion API set up as a APEX Shared Component, but ended up rewriting the call as a PL/SQL package to match the existing Group Calendar code.</p>
+
+<p>Still, the APEX Web Service References has a nice test harness to let tweak your headers and see the JSON response from your call. It helped me validate that the payload I was creating worked from APEX. Click here for a <a href="/images/20160121/test_APEX_rest_create-appointment.gif">3.4MB animated GIF of the testing harness proving it could create an appointment in Sales Cloud</a>.</p>
+
+<div class="full"><a href="/images/20160121/test_APEX_rest_create-appointment.gif"><img src="/images/20160121/test_APEX_rest_create-appointment_thumbnail.png" /></a></div>
+
+<h2 id="tests-tooling">Tests Tooling</h2>
+
+<p>For a RESTful client to draft that payload I used <a href="https://luckymarmot.com/paw">Paw</a> as a change of pace from <a href="https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en">Postman</a> (I like them both, Paw was just something new to try). These tools were quicker for iterating over changes I made to the request payload.</p>
+
+<p>When I went to implement the call in APEX as a PL/SQL package, I also created a logging table that I inserted the response (as APEX saw it) in a timestamped row. This helped me troubleshoot the more complicated, multi-stage calls that came later. </p>
+
+<div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="c1">--select dbms_metadata.get_ddl(&#39;TABLE&#39;,&#39;PDT_OSC_CAL_API_LOG&#39;) from dual; </span>
+ <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="ss">&quot;PDT_OSC_CAL_API_LOG&quot;</span> <span class="p">(</span> <span class="ss">&quot;RESPONSE_MSG&quot;</span> <span class="k">CLOB</span><span class="p">,</span> <span class="ss">&quot;CREATED&quot;</span> <span class="nb">DATE</span><span class="p">,</span> <span class="ss">&quot;CREATED_BY&quot;</span> <span class="n">VARCHAR2</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="ss">&quot;ID&quot;</span> <span class="nb">NUMBER</span><span class="p">,</span> <span class="ss">&quot;P_BODY&quot;</span> <span class="n">VARCHAR2</span><span class="p">(</span><span class="mi">4000</span><span class="p">),</span> <span class="k">CONSTRAINT</span> <span class="ss">&quot;PDT_OSC_CAL_API_PK&quot;</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="ss">&quot;ID&quot;</span><span class="p">)</span> <span class="p">)</span> 
+
+<span class="c1">--select dbms_metadata.get_ddl(&#39;TRIGGER&#39;,&#39;BI_PDT_OSC_CAL_API_LOG&#39;) from dual; </span>
+ <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">TRIGGER</span> <span class="ss">&quot;BI_PDT_OSC_CAL_API_LOG&quot;</span> <span class="k">before</span> <span class="k">insert</span> <span class="k">on</span> <span class="ss">&quot;PDT_OSC_CAL_API_LOG&quot;</span> <span class="k">for</span> <span class="k">each</span> <span class="k">row</span> 
+ <span class="k">begin</span> 
+   <span class="n">if</span> <span class="p">:</span><span class="k">NEW</span><span class="p">.</span><span class="ss">&quot;ID&quot;</span> <span class="k">is</span> <span class="k">null</span> <span class="k">then</span> 
+     <span class="k">select</span> <span class="n">to_number</span><span class="p">(</span><span class="n">sys_guid</span><span class="p">(),</span><span class="s1">&#39;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX&#39;</span><span class="p">)</span> <span class="k">into</span> <span class="p">:</span><span class="k">new</span><span class="p">.</span><span class="n">id</span> <span class="k">from</span> <span class="n">dual</span><span class="p">;</span>
+     <span class="p">:</span><span class="k">NEW</span><span class="p">.</span><span class="ss">&quot;CREATED&quot;</span> <span class="p">:</span><span class="o">=</span> <span class="n">sysdate</span><span class="p">;</span> 
+     <span class="p">:</span><span class="k">NEW</span><span class="p">.</span><span class="ss">&quot;CREATED_BY&quot;</span> <span class="p">:</span><span class="o">=</span> <span class="n">V</span><span class="p">(</span><span class="s1">&#39;APP_USER&#39;</span><span class="p">);</span>
+   <span class="k">end</span> <span class="n">if</span><span class="p">;</span> 
+ <span class="k">end</span><span class="p">;</span> 
+ <span class="k">ALTER</span> <span class="k">TRIGGER</span> <span class="ss">&quot;BI_PDT_OSC_CAL_API_LOG&quot;</span> <span class="n">ENABLE</span></code></pre></div>
+
+<h2 id="headers-for-your-rest-calls">Headers for Your REST calls</h2>
+<p>One of the first things I learned was that the R10 Fusion RESTful APIs require a special <code>Content-Type</code> header: <code>application/vnd.oracle.adf.resourceitem+json</code>. You also need to send some form of <code>Authorization</code> header: I used Basic Auth for testing but for the APEX app I could use Bearer Auth because we passed in a <a href="https://blogs.oracle.com/angelo/entry/jwt_token_security_with_fusion">JWT token</a> on the URL generated in Sales Cloud pointing at our APEX app.</p>
+
+<div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="c1">-- Headers necessary for Fusion RESTful API</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">name</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;Content-Type&#39;</span><span class="p">;</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">Value</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;application/vnd.oracle.adf.resourceitem+json&#39;</span><span class="p">;</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">name</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;Authorization&#39;</span><span class="p">;</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">Value</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;Bearer &#39;</span> <span class="o">||</span> <span class="n">p_jwt_token</span><span class="p">;</span></code></pre></div>
+
+<h2 id="activities-are-different">Activities are different</h2>
+<p>Since I wanted to create a meeting appointment, a <a href="https://blogs.oracle.com/fadevrel/entry/release_9_the_activity_redesign">little background on the Sales Cloud Activity model</a> was helpful. I used <a href="https://docs.oracle.com/cloud/latest/salescs_gs/FAAPS/op-salesApi-resources-11.1.10-activities-get.html">GETs</a> to query existing meeting appointments and figure out the formats for fields (note the ISO 8601 date format and the Base64-encoded description). I was able to pare down a POST’s payload body sent to <code>/salesApi/resources/latest/activities</code> to be just a few fields (not shown are the two headers: Basic Auth and Content-type: application/vnd.oracle.adf.resourceitem+json):</p>
+
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&quot;ActivityEndDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2016-01-08T19:30:00-08:00&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;Subject&quot;</span><span class="p">:</span> <span class="s2">&quot;Test RESTful Appointment&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;ActivityFunctionCode&quot;</span><span class="p">:</span> <span class="s2">&quot;APPOINTMENT&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;ActivityTypeCode&quot;</span><span class="p">:</span> <span class="s2">&quot;MEETING&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;ActivityStartDate&quot;</span><span class="p">:</span> <span class="s2">&quot;2016-01-08T18:30:00-08:00&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;OwnerId&quot;</span><span class="p">:</span> <span class="mi">300000047342468</span><span class="p">,</span>
+  <span class="nt">&quot;ActivityDescription&quot;</span><span class="p">:</span> <span class="s2">&quot;SGVyZSBpcyBhbiBhY3Rpdml0eSBkZXNjcmlwdGlvbiB0aGF0IEkgY291bGQgY3JlYXRlIGluIHRoZSBzYW1lIHJlcXVlc3QgYXMgdGhlIGFjdGl2aXR5IGl0c2VsZjsgSSBkaWRuJ3QgaGF2ZSB0byBtYWtlIGEgc2Vjb25kIGNhbGwgd2l0aCB0aGUganVzdC1jcmVhdGVkIGFjdGl2aXR5IElE&quot;</span>
+<span class="p">}</span></code></pre></div>
+
+<h2 id="whittle-down-your-response-payload">Whittle down your response payload</h2>
+<p>The response object that comes back from a Fusion REST call is huge, but it doesn’t have to be. <a href="https://docs.oracle.com/cloud/latest/salescs_gs/FAAPS/op-salesApi-resources-11.1.10-activities-%7BActivityNumber%7D-get.html">Two query parameters can help</a>: <code>?onlyData</code> (so you don’t get all the nested <code>links[]</code> arrays) and <code>?fields=Attribute1,Attribute2</code> (so that your main object only has the fields you’re looking for). </p>
+
+<h2 id="watch-out-for-too-huge-responses-in-apex">Watch out for too-huge responses in APEX</h2>
+<p>This response pruning ability was handy, because <a href="http://www.talkapex.com/2015/05/apexjsonparse-issue-with-clobs-and-11g.html">there’s a bug in APEX’s <code>APEX_JSON_PARSE</code> when running on 11g</a> that I ran into on our DBSchema instance. JSON responses larger than 8191 characters failed to parse, even though I could see a valid response was coming back in my log table. Turns out it’s really easy to get larger-than 8K+ responses from a Fusion REST call.</p>
+
+<h2 id="adding-contacts-to-a-meeting-are-a-two-phase-rest-call">Adding Contacts to a meeting are a two-phase REST call</h2>
+<p>I needed to parse the CLOB response as JSON because I wanted to tease out the <code>ActivityNumber</code> field and use it to build the URL for a follow-up POST call. Our flow into the APEX app was to start from a Contacts screen, so in addition to the <a href="https://blogs.oracle.com/fadevrel/entry/using_jwt_to_secure_your">JWT Token</a> we also send in the Contact_ID of the Fusion record we were looking at.  When we created the appointment meeting via REST we also wanted to add the Contact as an attachment. </p>
+
+<p>This necessitated a two-part REST call: the first to create the activity and the second to use the returned ID in another <a href="https://docs.oracle.com/cloud/latest/salescs_gs/FAAPS/op-salesApi-resources-11.1.10-activities-%7BActivityNumber%7D-child-ActivityContact-post.html">POST URL to create an activity contact</a> at <code>/salesApi/resources/latest/activities/{ActivityNumber}/child/ActivityContact</code>. The body of that POST was only the Contact_ID that we were passed in as a parameter on the URL generated by App Composer.</p>
+
+<h2 id="apex-will-let-you-do-random-gets">APEX will let you do random GETs</h2>
+<p>Since I had been carrying that Contact_ID around from screen to screen in APEX, I thought a nice touch was to call back in to Fusion to pick up some additional details about the contact, such as full name and email address. </p>
+
+<p>I used an After Header Process (after Load Data) on the APEX page to pre-populate two fields with live Fusion contact data. It might make more sense to pull Fusion data in differently for use in other APEX pages, but the one-off GET did the trick for this APEX form.</p>
+
+<div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">DECLARE</span>
+   <span class="n">l_response_clob</span>    <span class="k">clob</span><span class="p">;</span>
+
+<span class="k">BEGIN</span>
+      <span class="c1">-- Headers necessary for Fusion RESTful API</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">name</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;Content-Type&#39;</span><span class="p">;</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">Value</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;application/vnd.oracle.adf.resourceitem+json&#39;</span><span class="p">;</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">name</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;Authorization&#39;</span><span class="p">;</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">Value</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;Bearer &#39;</span> <span class="o">||</span> <span class="p">:</span><span class="n">JWT_TOKEN</span><span class="p">;</span>
+
+
+      <span class="c1">-- make the request using parameters</span>
+      <span class="n">l_response_clob</span> <span class="p">:</span><span class="o">=</span> <span class="n">apex_web_service</span><span class="p">.</span><span class="n">make_rest_request</span><span class="p">(</span>
+              <span class="n">p_url</span> <span class="o">=&gt;</span> <span class="s1">&#39;https://adc2-fap1370-crm.oracledemos.com/crmCommonApi/resources/latest/contacts?q=PartyId=&#39;</span> <span class="o">||</span> <span class="p">:</span><span class="n">CONTACT_ID</span> <span class="o">||</span> <span class="s1">&#39;&amp;onlyData&amp;fields=ContactName,EmailAddress&#39;</span><span class="p">,</span>
+              <span class="n">p_http_method</span> <span class="o">=&gt;</span> <span class="s1">&#39;GET&#39;</span>
+      <span class="p">);</span>
+
+      <span class="c1">-- log it</span>
+      <span class="k">insert</span> <span class="k">into</span> <span class="n">PDT_OSC_CAL_API_LOG</span><span class="p">(</span><span class="n">RESPONSE_MSG</span><span class="p">,</span> <span class="n">P_BODY</span><span class="p">)</span>
+      <span class="k">values</span><span class="p">(</span><span class="n">l_response_clob</span><span class="p">,</span> <span class="s1">&#39;jwt: &#39;</span> <span class="o">||</span> <span class="p">:</span><span class="n">JWT_TOKEN</span> <span class="o">||</span><span class="s1">&#39; contact_id: &#39;</span> <span class="o">||</span> <span class="p">:</span><span class="n">CONTACT_ID</span><span class="p">);</span>
+      <span class="k">commit</span><span class="p">;</span>
+
+
+      <span class="c1">-- parse the response to put contact data into APEX fields</span>
+      <span class="n">apex_json</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">l_response_clob</span><span class="p">);</span>
+      <span class="p">:</span><span class="n">P10_CONTACT_PERSON</span> <span class="p">:</span><span class="o">=</span> <span class="n">apex_json</span><span class="p">.</span><span class="n">get_varchar2</span><span class="p">(</span><span class="n">p_path</span> <span class="o">=&gt;</span> <span class="s1">&#39;items[1].ContactName&#39;</span><span class="p">);</span> 
+      <span class="p">:</span><span class="n">P10_CONTACT_EMAIL</span> <span class="p">:</span><span class="o">=</span> <span class="n">apex_json</span><span class="p">.</span><span class="n">get_varchar2</span><span class="p">(</span><span class="n">p_path</span> <span class="o">=&gt;</span> <span class="s1">&#39;items[1].EmailAddress&#39;</span><span class="p">);</span>
+<span class="k">END</span></code></pre></div>
+
+<h2 id="mirroring-the-existing-apex-code">Mirroring the existing APEX code</h2>
+<p>Finally, here’s my custom package that mirrored the APEX process that runs when CREATE was pressed on the existing APEX page. I just added a call to my custom package right after the call to <code>EBA_ca_api.create_event</code>, using the same parameters.</p>
+
+<div class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">create</span> <span class="k">or</span> <span class="k">replace</span> <span class="n">package</span> <span class="n">body</span> <span class="n">PDT_OSC_cal_api</span>
+<span class="k">as</span>
+
+<span class="c1">--this signature mirrors the create_event in the Group Calendar packaged app; I didn&#39;t end up using all these fields</span>
+<span class="k">procedure</span> <span class="n">create_event</span> <span class="p">(</span>
+   <span class="n">p_event_name</span>       <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_type_id</span>          <span class="nb">number</span><span class="p">,</span>
+   <span class="n">p_new_event_type</span>   <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_event_date_time</span>  <span class="k">timestamp</span> <span class="k">with</span> <span class="k">local</span> <span class="n">time</span> <span class="k">zone</span><span class="p">,</span>
+   <span class="n">p_duration</span>         <span class="nb">number</span><span class="p">,</span>
+   <span class="n">p_event_desc</span>       <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_contact_person</span>   <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_contact_email</span>    <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_display_time</span>     <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_location</span>         <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_link_name_1</span>      <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_link_url_1</span>       <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_link_name_2</span>      <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_link_url_2</span>       <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_link_name_3</span>      <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_link_url_3</span>       <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_tags</span>             <span class="n">varchar2</span> <span class="k">default</span> <span class="k">null</span><span class="p">,</span>
+   <span class="c1">-- here are two fields I added to the signature: they are passed in as parameters on the Sales Cloud-generated link and I passed them around as application items</span>
+   <span class="n">p_contact_id</span>       <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_jwt_token</span>        <span class="n">varchar2</span><span class="p">,</span>
+   <span class="c1">--</span>
+   <span class="n">p_recur_flag</span>       <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_recur_freq</span>       <span class="n">varchar2</span><span class="p">,</span>
+   <span class="n">p_recur_end_date</span>   <span class="k">timestamp</span> <span class="k">with</span> <span class="k">local</span> <span class="n">time</span> <span class="k">zone</span> <span class="p">)</span>
+<span class="k">is</span>
+   <span class="n">l_event_type_id</span>    <span class="nb">number</span>  <span class="k">default</span> <span class="k">null</span><span class="p">;</span>
+   <span class="n">l_series_id</span>        <span class="nb">number</span><span class="p">;</span>
+   <span class="n">l_response_clob</span>    <span class="k">clob</span><span class="p">;</span>
+   <span class="c1">--convert p_duration (hours) into timestamp for use in p_body</span>
+   <span class="n">l_event_end_date</span>   <span class="k">timestamp</span> <span class="k">with</span> <span class="k">local</span> <span class="n">time</span> <span class="k">zone</span> <span class="p">:</span><span class="o">=</span> <span class="n">p_event_date_time</span> <span class="o">+</span> <span class="p">(</span><span class="n">p_duration</span> <span class="o">*</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">24</span><span class="p">));</span>
+   <span class="c1">--clean up and convert p_tags into Base64 for use in ActivityDescription</span>
+   <span class="c1">--alas the REPLACE()s make newlines if needed </span>
+   <span class="c1">--but you cant have multi-line JSON strings and something in the cast chain was splitting and inserting CRLFs</span>
+   <span class="n">l_activitydesc</span>     <span class="n">varchar2</span><span class="p">(</span><span class="mi">32767</span><span class="p">)</span> <span class="p">:</span><span class="o">=</span> <span class="k">REPLACE</span><span class="p">(</span>
+                              <span class="k">REPLACE</span><span class="p">(</span> 
+                              <span class="n">utl_raw</span><span class="p">.</span><span class="n">cast_to_varchar2</span><span class="p">(</span><span class="n">utl_encode</span><span class="p">.</span><span class="n">base64_encode</span><span class="p">(</span><span class="n">utl_raw</span><span class="p">.</span><span class="n">cast_to_raw</span><span class="p">(</span><span class="s1">&#39;Interest in CSG: &#39;</span><span class="o">||</span> <span class="k">REPLACE</span><span class="p">(</span><span class="n">p_tags</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="p">)))),</span> 
+                              <span class="n">CHR</span><span class="p">(</span><span class="mi">13</span><span class="p">),</span> 
+                              <span class="s1">&#39;\n&#39;</span> <span class="p">),</span>
+                           <span class="n">CHR</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> 
+                           <span class="s1">&#39;&#39;</span> <span class="p">)</span> <span class="p">;</span>
+   <span class="n">l_pbody</span>            <span class="n">varchar2</span><span class="p">(</span><span class="mi">4000</span><span class="p">);</span>
+   <span class="n">l_new_activity_id</span>  <span class="n">varchar2</span><span class="p">(</span><span class="mi">30</span><span class="p">);</span>
+
+<span class="k">begin</span>
+       
+   <span class="n">if</span> <span class="n">p_recur_flag</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span> <span class="k">then</span>
+      <span class="c1">-- TODO: write recurring event logic in the future; code structure was &#39;borrowed&#39; liberally from the APEX packaged app codebase</span>
+      <span class="k">NULL</span><span class="p">;</span>
+   <span class="k">else</span>
+      
+      <span class="c1">-- Headers necessary for Fusion RESTful API</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">name</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;Content-Type&#39;</span><span class="p">;</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">1</span><span class="p">).</span><span class="n">Value</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;application/vnd.oracle.adf.resourceitem+json&#39;</span><span class="p">;</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">name</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;Authorization&#39;</span><span class="p">;</span>
+      <span class="n">apex_web_service</span><span class="p">.</span><span class="n">g_request_headers</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">Value</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;Bearer &#39;</span> <span class="o">||</span> <span class="n">p_jwt_token</span><span class="p">;</span>
+
+      <span class="c1">--build the payload, hardcoded to go to lisa.jones&#39; calendar because I didn&#39;t build out lookups in APEX against live Fusion OwnerIds</span>
+      <span class="n">l_pbody</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;{</span>
+<span class="s1">                &quot;ActivityEndDate&quot;: &quot;&#39;</span> <span class="o">||</span> <span class="n">to_char</span><span class="p">(</span><span class="n">l_event_end_date</span><span class="p">,</span> <span class="s1">&#39;yyyy-mm-dd&#39;</span><span class="p">)</span> <span class="o">||</span><span class="s1">&#39;T&#39;</span><span class="o">||</span> <span class="n">to_char</span><span class="p">(</span><span class="n">l_event_end_date</span><span class="p">,</span> <span class="s1">&#39;hh24:mi:ss&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="s1">&#39;-08:00&quot;,</span>
+<span class="s1">                &quot;Subject&quot;: &quot;&#39;</span> <span class="o">||</span> <span class="n">p_event_name</span> <span class="o">||</span> <span class="s1">&#39;&quot;,</span>
+<span class="s1">                &quot;ActivityFunctionCode&quot;: &quot;APPOINTMENT&quot;,</span>
+<span class="s1">                &quot;ActivityTypeCode&quot;: &quot;MEETING&quot;,</span>
+<span class="s1">                &quot;ActivityStartDate&quot;: &quot;&#39;</span> <span class="o">||</span> <span class="n">to_char</span><span class="p">(</span><span class="n">p_event_date_time</span><span class="p">,</span> <span class="s1">&#39;yyyy-mm-dd&#39;</span><span class="p">)</span> <span class="o">||</span><span class="s1">&#39;T&#39;</span><span class="o">||</span> <span class="n">to_char</span><span class="p">(</span><span class="n">p_event_date_time</span><span class="p">,</span> <span class="s1">&#39;hh24:mi:ss&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="s1">&#39;-08:00&quot;,</span>
+<span class="s1">                &quot;OwnerId&quot;: 300000047342468,</span>
+<span class="s1">                &quot;ActivityDescription&quot;: &quot;&#39;</span><span class="o">||</span> <span class="n">l_activitydesc</span> <span class="o">||</span><span class="s1">&#39;&quot;</span>
+<span class="s1">              }&#39;</span><span class="p">;</span>
+
+      <span class="c1">-- make the request using ?onlyData parameter</span>
+      <span class="n">l_response_clob</span> <span class="p">:</span><span class="o">=</span> <span class="n">apex_web_service</span><span class="p">.</span><span class="n">make_rest_request</span><span class="p">(</span>
+              <span class="n">p_url</span> <span class="o">=&gt;</span> <span class="s1">&#39;https://origin-adc2-fap1370-crm.oracledemos.com/salesApi/resources/latest/activities?onlyData&#39;</span><span class="p">,</span>
+              <span class="n">p_http_method</span> <span class="o">=&gt;</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+              <span class="n">p_body</span>  <span class="o">=&gt;</span> <span class="n">l_pbody</span>
+      <span class="p">);</span>
+
+      <span class="c1">-- log it</span>
+      <span class="k">insert</span> <span class="k">into</span> <span class="n">PDT_OSC_CAL_API_LOG</span><span class="p">(</span><span class="n">RESPONSE_MSG</span><span class="p">,</span> <span class="n">P_BODY</span><span class="p">)</span>
+      <span class="k">values</span><span class="p">(</span><span class="n">l_response_clob</span><span class="p">,</span> <span class="n">l_pbody</span><span class="p">);</span>
+      <span class="k">commit</span><span class="p">;</span>
+
+      <span class="c1">-- parse the response so we can attach a contact</span>
+      <span class="n">apex_json</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">l_response_clob</span><span class="p">);</span>
+      <span class="n">l_new_activity_id</span> <span class="p">:</span><span class="o">=</span> <span class="n">apex_json</span><span class="p">.</span><span class="n">get_varchar2</span><span class="p">(</span><span class="n">p_path</span> <span class="o">=&gt;</span> <span class="s1">&#39;ActivityNumber&#39;</span><span class="p">);</span>
+
+      <span class="c1">-- make the follow-up POST request to add a contactID to the just-created activity</span>
+      <span class="n">l_pbody</span> <span class="p">:</span><span class="o">=</span> <span class="s1">&#39;{    </span>
+<span class="s1">              &quot;ContactId&quot; : &#39;</span> <span class="o">||</span> <span class="n">p_contact_id</span> <span class="o">||</span> <span class="s1">&#39;</span>
+<span class="s1">      }&#39;</span><span class="p">;</span>
+
+      <span class="n">l_response_clob</span> <span class="p">:</span><span class="o">=</span> <span class="n">apex_web_service</span><span class="p">.</span><span class="n">make_rest_request</span><span class="p">(</span>
+              <span class="n">p_url</span> <span class="o">=&gt;</span> <span class="s1">&#39;https://origin-adc2-fap1370-crm.oracledemos.com/salesApi/resources/latest/activities/&#39;</span> <span class="o">||</span> <span class="n">l_new_activity_id</span> <span class="o">||</span> <span class="s1">&#39;/child/ActivityContact?onlyData&#39;</span><span class="p">,</span>
+              <span class="n">p_http_method</span> <span class="o">=&gt;</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+              <span class="n">p_body</span>  <span class="o">=&gt;</span> <span class="n">l_pbody</span>
+      <span class="p">);</span>
+      
+      <span class="c1">-- log it</span>
+      <span class="k">insert</span> <span class="k">into</span> <span class="n">PDT_OSC_CAL_API_LOG</span><span class="p">(</span><span class="n">RESPONSE_MSG</span><span class="p">,</span> <span class="n">P_BODY</span><span class="p">)</span>
+      <span class="k">values</span><span class="p">(</span><span class="n">l_response_clob</span><span class="p">,</span> <span class="n">l_pbody</span><span class="p">);</span>
+      
+
+   <span class="k">end</span> <span class="n">if</span><span class="p">;</span>
+
+   <span class="k">commit</span><span class="p">;</span>
+<span class="k">end</span> <span class="n">create_event</span><span class="p">;</span>
+
+<span class="k">end</span> <span class="n">PDT_OSC_cal_api</span><span class="p">;</span></code></pre></div>
+
+
+            
+            <div class="tags">
+<a href="/tag/APEX">APEX</a>
+<a href="/tag/Sales Cloud">Sales Cloud</a>
+<a href="/tag/Dev">Dev</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Creating Oracle Sales Cloud Calendar Activities Via APEX REST Calls" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2016/01/20/pouring-jet-cookbook-into-quickstart/">&laquo; Pouring JET Cookbook Code into QuickStart</a> 
+                 
+                 
+                    <a class="next-post" href="/2016/01/23/modules-are-your-friends/">Modules are Your Friends &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

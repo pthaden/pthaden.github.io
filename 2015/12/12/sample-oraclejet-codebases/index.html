@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample OracleJET Codebases In the Wild &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Sample OracleJET Codebases In the Wild ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2015/12/12/sample-oraclejet-codebases/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Sample OracleJET Codebases In the Wild "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2015/12/12/sample-oraclejet-codebases/"/>
+    
+    
+    <meta property="og:description" content="A collection of downloadable OracleJET samples"/>
+    <meta name="description" content="A collection of downloadable OracleJET samples"/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2015-12-December" title="December 12, 2015">December 12, 2015</time>
+            </div>
+            <h1 class="title">Sample OracleJET Codebases In the Wild</h1>
+            </header>
+
+        <section>
+            <p>If you want to get started with OracleJET, the <em>purest</em> way is to download <a href="https://blogs.oracle.com/geertjan/entry/starting_with_the_oracle_jet">only the base distribution package and then create a HTML5/JS app in NetBeans</a>. This creates a very plain app: an empty canvas ready for you to pour your code into from scratch.</p>
+
+<p>But if you’re looking to see (and possibly steal ideas from) some working code, the <em>easiest</em> way is to use NetBeans 8.1’s <a href="http://www.oracle.com/webfolder/technetwork/jet/public_samples/OracleJET_QuickStartBasic/public_html/index.html">QuickStart Template</a> and let it download the Basic Starter Template zip file to build out a project for you. The wizard uses the same <a href="http://www.oracle.com/technetwork/developer-tools/jet/downloads/index.html">Quickstart basic starter code that you can download by hand from OTN</a> if you don’t want to use NetBeans.</p>
+
+<p>As I’ve been ramping up on JET I’ve stumbled on a few other examples of working JET code that can be imported as HTML5/JS apps into NetBeans following the same steps in Geertjan’s blog above. Here’s a list of some JET samples in the wild:</p>
+
+<h2 id="workbetter-app">WorkBetter App</h2>
+<p>The <a href="http://www.oracle.com/webfolder/technetwork/jet/public_samples/WorkBetter/public_html/index.html">WorkBetter demo</a> is a great showcase of what you can do with JET and stands in contrast to the <a href="http://www.oracle.com/webfolder/technetwork/jet/public_samples/OracleJET_QuickStartBasic/public_html/index.html">QuickStart template</a> with fancy styling and masonry layout on the home page. If it looks familiar it’s because this is the JET version of <a href="http://jdevadf.oracle.com/workbetter/faces/index.jsf">the ADF WorkBetter sample app</a>. The beautiful thing is that you can look at the code by downloading the zip file:</p>
+
+<ul>
+  <li>Working copy: <a href="http://www.oracle.com/webfolder/technetwork/jet/public_samples/WorkBetter/public_html/index.html">JET WorkBetter Demo</a></li>
+  <li>Code zip file: <a href="http://www.oracle.com/technetwork/developer-tools/jet/downloads/index.html">WorkBetter.zip</a></li>
+</ul>
+
+<h2 id="moviesjet">moviesJET</h2>
+<p>Blogger <a href="http://www.kennethlange.com/">Kenneth Lange</a> wrote an <a href="http://www.kennethlange.com/posts/oracle_jet.html">excellent JET tutorial that mirrors an Angular.js exercise</a> out on the Internets. He builds a CRUD app up from the base distribution and documents the process.</p>
+
+<ul>
+  <li>Code zip file: <a href="http://www.kennethlange.com/resources/oracle_jet_demo_app.zip">oracle_jet_demo_app.zip</a></li>
+</ul>
+
+<h2 id="oraclejet-commonmodel-crud">OracleJET-CommonModel-CRUD</h2>
+<p>Buried <a href="https://docs.oracle.com/middleware/jet112/jet/developer/GUID-0C0D187C-CDCB-4235-ADA8-7AE9D93FFA08.htm#JETDG552">deep in the JET documentation</a> is another CRUD sample app. This one is based on the JET Common Model and also is an example of how to use the REST mock server. That documentation page is a rundown of the code, but it’s nice to have a working copy in NetBeans to follow along with and hack on.</p>
+
+<ul>
+  <li>Code zip file: <a href="http://www.oracle.com/webfolder/technetwork/jet/public_samples/JET-CommonModel-CRUD.zip">OraclerJET-CommonModel-CRUD</a></li>
+</ul>
+
+<h2 id="spa-ojmodule-ojrouter">SPA-ojModule-ojRouter</h2>
+<p>Another code sample can be found in the docs at the bottom of <a href="https://docs.oracle.com/middleware/jet112/jet/developer/GUID-307B5D75-4D96-413B-A8FB-2212ED401061.htm#JETDG327">Designing Single-Page Applications Using Oracle JET</a>. This page walks through creating a SPA with ojModule and ojRouter to create a bookmarkable website and talks about when to use query parameters versus URI path segments.</p>
+
+<p>I hope they keep posting downloadable code samples from the documentation, as it illuminates the docs and proves that the steps work.</p>
+
+<ul>
+  <li>Code zip file: <a href="http://www.oracle.com/webfolder/technetwork/jet/public_samples/SPA-ojModule-ojRouter.zip">SPA-ojModule-ojRouter</a></li>
+</ul>
+
+<h2 id="componentsinteractions">ComponentsInteractions</h2>
+<p>There’s another code sample on the JET OTN Downloads page named “Components Interactions” and you can download the source code from there, but I strongly recommend you instead follow the <a href="http://www.oracle.com/webfolder/technetwork/jet/globalExamples-HOL.html">OpenWorld Hands-On-Lab instructions</a> and build this code yourself from scratch. The HOL instructions will walk you through it and you’ll end up with the same code as below but will learn a lot more from the experience.</p>
+
+<ul>
+  <li>Working copy: <a href="http://www.oracle.com/webfolder/technetwork/jet/public_samples/JET-ComponentInteraction/public_html/index.html">JET-ComponentInteraction</a></li>
+  <li>Code zip file: <a href="http://www.oracle.com/technetwork/developer-tools/jet/downloads/index.html">Components Interactions: Sample Application for Oracle JavaScript Extension Toolkit</a></li>
+</ul>
+
+<hr />
+<p>I’m on the lookout for more sample code, so please let me know if you have links to any other good codebases.</p>
+
+
+            
+            <div class="tags">
+<a href="/tag/Oracle JET">Oracle JET</a>
+<a href="/tag/Dev">Dev</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Sample OracleJET Codebases In the Wild" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2015/12/03/adding-fontawesome-to-oracle-jet-quickstart/">&laquo; Adding FontAwesome to Oracle JET QuickStart</a> 
+                 
+                 
+                    <a class="next-post" href="/2015/12/15/bookmark-links-to-muliple-opc-identity-domains/">Bookmark Links to Multiple Oracle Public Cloud Identity Domains &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

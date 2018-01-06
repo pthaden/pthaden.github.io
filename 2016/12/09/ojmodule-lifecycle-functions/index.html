@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leveraging the ojModule Life&nbsp;Cycle Functions &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Leveraging the ojModule Life&nbsp;Cycle Functions ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2016/12/09/ojmodule-lifecycle-functions/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Leveraging the ojModule Life&nbsp;Cycle Functions "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2016/12/09/ojmodule-lifecycle-functions/"/>
+    
+    
+    <meta property="og:description" content="Understanding the four horsemen of the ojModule templates: handleActivated, handleAttached, handleBindingsApplied, and handleDetached"/>
+    <meta name="description" content="Understanding the four horsemen of the ojModule templates: handleActivated, handleAttached, handleBindingsApplied, and handleDetached"/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2016-09-December" title="December 09, 2016">December 09, 2016</time>
+            </div>
+            <h1 class="title">Leveraging the ojModule Life&nbsp;Cycle Functions</h1>
+            </header>
+
+        <section>
+            <p>Srikantha Bhadrasetty asked <a href="http://likeahouseafire.com/2016/01/20/pouring-jet-cookbook-into-quickstart/#comment-3040014952">a good question on an old blog post about using JET Cookbook code</a>: How do you reuse the more complicated recipes that lean on tools like jQuery’s DOMReady function?</p>
+
+<p>In that <a href="http://www.oracle.com/webfolder/technetwork/jet/jetCookbook.html?component=tree&amp;demo=treeDnD">particular cookbook entry</a> there is a jQuery function that waits for the DOM to be built before registering the two <code>treeModels</code> and adding drag and drop event listeners to three pink <code>div</code>s. If we refactor all the cookbook code into one of the QuickStart’s RequireJS-based ojModules but leave that code in the jQuery DOMReady function, it will fire at the wrong time and the ojModule won’t load. Your console will show an error like:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">Uncaught <span class="o">(</span>in promise<span class="o">)</span> ReferenceError: Unable to process binding <span class="s2">&quot;ojComponent: {</span>
+<span class="s2">           component:&#39;ojTree&#39;, ...&quot;</span></code></pre></div>
+
+<p><a href="https://gist.github.com/pthaden/78825aca766280ea18c7e53d674c19f7">The solution</a> is to move the code out of the jQuery DOMReady <code>$(function(){ ... })</code> and into appropriate ojModule life cycle functions, like <code>self.handleAttached</code> and <code>self.handleBindingsApplied</code>.</p>
+
+<h2 id="what-is-the-ojmodule-viewmodel-life-cycle">What is the ojModule ViewModel Life Cycle?</h2>
+
+<p>When you use ojModule to load your views and viewModels (as the QuickStart is configured to do with the help of the Router), you can hook into listeners that fire at defined spots in the ojModule’s life cycle. These are documented in the <a href="https://docs.oracle.com/middleware/jet202/jet/developer/GUID-ABB82BD1-9B65-44D2-AE43-81A0A3A44453.htm#JETDG-GUID-ABB82BD1-9B65-44D2-AE43-81A0A3A44453">JET Developers Guide</a> and in the <a href="http://docs.oracle.com/middleware/jet220/jet/reference-jet/ojModule.html">ojModule JSdocs</a>.</p>
+
+<p>If you’ve used the Yeoman generator to build a NavDrawer or NavBar template project, you’ve probably already seen the placeholders for some of these life cycle functions in the template code, with a <em>ton</em> of comments explaining their use and an empty <code>// Implement if needed</code> function body for each:</p>
+
+<div class="full zoomable"><img src="/images/20161209/implement_if_needed.png" /></div>
+
+<p>If you don’t need them in your viewModel code, it’s safe to delete these function stubs. When ojModule comes to the respective points in time to call the appropriate life cycle function, it just keeps going if the callback is null or if it’s an empty function like in the template code.</p>
+
+<p>But if we have our own code that needs to run at a specific point, such as before or after the corresponding view’s DOM gets built in the browser or even before or after the Knockout bindings fire, we can leverage these specially-named functions and put our code inside of them.</p>
+
+<p>For fun, I threw some <a href="https://developers.google.com/web/tools/chrome-devtools/console/track-executions#marking-the-timeline">Chrome timeline markers</a> into my code like so:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span> <span class="nx">lifecycleContentViewModel</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">timeStamp</span><span class="p">(</span><span class="s2">&quot;viewModel Started&quot;</span><span class="p">);</span>
+
+  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+  <span class="nx">self</span><span class="p">.</span><span class="nx">handleActivated</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">timeStamp</span><span class="p">(</span><span class="s2">&quot;handleActivated Started&quot;</span><span class="p">);</span>
+    <span class="c1">// Implement if needed</span>
+  <span class="p">};</span> 
+  <span class="p">...</span></code></pre></div>
+
+<p>This makes little orange circles that correspond to timestamp markers at the top of the timeline in the Developer Tools. You can see in the graphic below that there’s a dependable order the life cycle functions fire in and that it happens in the context of loading the current ojModule, <a href="https://www.kirupa.com/html5/running_your_code_at_the_right_time.htm">long before a jQuery DOMReady or window.load event would fire</a> (this image is a composite of me hovering the mouse over each circle, one at a time):</p>
+
+<div class="full zoomable"><img src="/images/20161209/lifecycle_timeline.png" /></div>
+
+<h2 id="which-one-to-use">Which one to use?</h2>
+
+<p>So this brings us back to the <a href="http://www.oracle.com/webfolder/technetwork/jet/jetCookbook.html?component=tree&amp;demo=treeDnD">cookbook code for the drag-and-drop example</a>. How do we decide what recipe code goes into which life cycle function?</p>
+
+<p>By identifying the timing points for when our code needs to run, we can pick the right life cycle function to stick it into. The comments in the Yeoman-generated template viewModels and the documentation help you decide which to pick, and here’s some thoughts on the four of them:</p>
+
+<div class="full">
+<style>
+    td{padding-left: 1em ;
+  text-indent: -1em ;
+}
+</style>
+<table>
+  <thead>
+    <tr>
+      <th width="27%"><strong>function</strong></th>
+      <th width="30%"><strong>when it fires</strong></th>
+      <th width="40%"><strong>what it’s good for</strong></th>
+    </tr>
+  </thead>
+  <tbody style="  text-align: left; vertical-align: text-top;">
+    <tr>
+      <td>handleActivated</td>
+      <td>right before view is built</td>
+      <td>fetching data needed for the view's elements</td>
+    </tr>
+    <tr>
+      <td>handleAttached</td>
+      <td>right after view is attached to the DOM</td>
+      <td>modifying HTML elements via JavaScript; any time you might want to use a $('selector') and be able to trust the element is there</td>
+    </tr>
+    <tr>
+      <td>handleBindingsApplied</td>
+      <td>after the ko.applyBindings has run against the view </td>
+      <td>programatically work with the ojComponents post-binding </td>
+    </tr>
+    <tr>
+      <td>handleDetached</td>
+      <td>after view is detached from the DOM</td>
+      <td>cleaning up </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>There are a few additional functions listed in the docs that fire at other points in the ojModule life cycle, but these are the four that are stubbed out in the NavDrawer and NavBar templates.</p>
+
+<p>Going back to the problem code wrapped in the jQuery DOMReady function from the previously linked drag-and-drop cookbook recipe. I’ll annotate it with comments based on what we need to do:</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">$</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    
+<span class="cm">/* these new models need to be created after the DOM is created but before the bindings are applied, so that they&#39;re in place when the KO bindings fire  */</span>
+  <span class="kd">var</span> <span class="nx">vmTree1</span>  <span class="o">=</span> <span class="k">new</span> <span class="nx">treeModel</span><span class="p">(</span><span class="s2">&quot;tree1&quot;</span><span class="p">)</span> <span class="p">;</span>
+  <span class="kd">var</span> <span class="nx">vmTree2</span>  <span class="o">=</span> <span class="k">new</span> <span class="nx">treeModel</span><span class="p">(</span><span class="s2">&quot;tree2&quot;</span><span class="p">)</span> <span class="p">;</span>
+<span class="cm">/* */</span>
+    
+<span class="cm">/* these cookbook lines need to be removed, because oj.Router.sync() in main.js will apply the bindings and we can&#39;t do it twice */</span>
+  <span class="nx">ko</span><span class="p">.</span><span class="nx">applyBindings</span><span class="p">(</span><span class="nx">vmTree1</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;tree1&#39;</span><span class="p">));</span>
+  <span class="nx">ko</span><span class="p">.</span><span class="nx">applyBindings</span><span class="p">(</span><span class="nx">vmTree2</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;tree2&#39;</span><span class="p">));</span>
+<span class="cm">/* */</span>
+    
+<span class="cm">/* these event handlers can&#39;t be added until the divs are in the DOM and the ojComponents are ready, so also must run after view is attached */</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">div</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&quot;dragdiv&quot;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">)</span> <span class="p">;</span>
+
+    <span class="nx">div</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;dragstart&quot;</span><span class="p">,</span> <span class="nx">dragDivStart</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span> <span class="p">;</span>
+    <span class="nx">div</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;dragend&quot;</span><span class="p">,</span>   <span class="nx">dragDivEnd</span><span class="p">,</span>   <span class="kc">false</span><span class="p">)</span> <span class="p">;</span>
+  <span class="p">}</span>   
+<span class="cm">/* */</span>
+
+<span class="p">});</span></code></pre></div>
+
+<p>For our code, we need the <code>self.handleAttached</code> to setup the models that build the two trees. Looking at the <code>treeModel()</code> function, it’s obvious the DOM needs to already be in place so that the constructor can build the ojTree structure on top of the two existing <code>tree1</code> and <code>tree2</code> divs.</p>
+
+<p>We pick the <code>self.handleBindingsApplied</code> function to run the <code>for()</code> loop that registers the dragstart and dragend events since in the original code the <code>ojTree</code>s are already bound, although they technically could run earlier in the <code>handleAttached</code> function because they only rely on having the <code>div</code>s present in the DOM.</p>
+
+<p>Again, have a look at the full view and viewModel code for a working example of the drag-and-drop cookbook recipe re-purposed for the NavDrawer ojModule pattern:</p>
+
+<script src="https://gist.github.com/pthaden/78825aca766280ea18c7e53d674c19f7.js"></script>
+
+
+            
+            <div class="tags">
+<a href="/tag/JET">JET</a>
+<a href="/tag/Dev">Dev</a>
+<a href="/tag/JavaScript">JavaScript</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Leveraging the ojModule Life&nbsp;Cycle Functions" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2016/10/04/build-standalone-app-with-electron-and-jet/">&laquo; Build a Standalone App with Electron and Oracle&nbsp;JET</a> 
+                 
+                 
+                    <a class="next-post" href="/2016/12/12/return-a-promise-from-handleactivated/">Return a Promise from handleActivated for Data-bound ojModules &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

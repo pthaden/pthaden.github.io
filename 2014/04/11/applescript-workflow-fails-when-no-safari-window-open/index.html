@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applescript Workflow Fails When No Safari Window Open &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Applescript Workflow Fails When No Safari Window Open ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2014/04/11/applescript-workflow-fails-when-no-safari-window-open/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Applescript Workflow Fails When No Safari Window Open "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2014/04/11/applescript-workflow-fails-when-no-safari-window-open/"/>
+    
+    <meta property="og:image" content="http://www.likeahouseafire.com/images/automator_javascript_error.jpg"/>
+    
+    <meta property="og:image" content="http://www.likeahouseafire.com/images/Avatar.png"/>   
+    
+    
+    <meta property="og:description" content="The action “Run AppleScript” encountered an error...."/>
+    <meta name="description" content="The action “Run AppleScript” encountered an error...."/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<div class="article-cover">
+    <div>
+        <img src="/images/automator_javascript_error.jpg" class="image">
+    </div>
+</div>
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2014-11-April" title="April 11, 2014">April 11, 2014</time>
+            </div>
+            <h1 class="title">Applescript Workflow Fails When No Safari Window Open</h1>
+            </header>
+
+        <section>
+            <p>Found an error with an AppleScript Workflow that I’ve had installed to my ~/Library/Services for a long time, but only now noticed that it doesn’t work when there are no Safari windows open.</p>
+
+<p>My little workflow is something I’ve hacked from others’ work for automating an internal employee directory that doesn’t have any APIs but does let you hit a search URL which executes and returns in a browser window.  If you want to look up someone mentioned in an email or other document you simply highlight the text, right click and choose the workflow from the Services context menu.</p>
+
+<p>Now I’ll admit that I keep a whole lot of windows open on my desktop.  So it’s pretty rare that I’ve closed every window in Safari.  Even Safari itself will open a blank window of Top Sites when it starts up if you had all windows closed in the last session, and thus my workflow has never broken down until I discovered this unique (for me) use case:  Safari is running, but all windows are closed.  Only then would I get a non-descript message from  Automator:</p>
+
+<p><code>The action “Run AppleScript” encountered an error</code></p>
+
+<p>Thanks to <a href="http://stackoverflow.com/a/9082574">this StackOverflow answer</a> I learned that the JavaScript in my workflow needs a window to do its work in.  When there’s no window open in Safari there’s no destination for my JavaScript.  I found that <code>reopen</code> works much better for me, and once I replaced the <code>activate</code> code my little service works fine.</p>
+
+<p>Here’s the code with my little regex that extracts out only an email address if it finds one in the text you highlight, but otherwise just submits the text you highlighted:</p>
+
+<div class="highlight"><pre><code class="language-applescript" data-lang="applescript"><span class="k">on</span> <span class="nb">run</span> <span class="p">{</span><span class="nv">inText</span><span class="p">}</span>
+	<span class="k">tell</span> <span class="nb">application</span> <span class="s2">&quot;Safari&quot;</span>
+		<span class="nv">reopen</span> <span class="c">-- unlike activate, this opens a window</span>
+		<span class="k">set</span> <span class="nv">searchTerm</span> <span class="k">to</span> <span class="nv">inText</span>
+		<span class="k">set</span> <span class="nv">xNow</span> <span class="k">to</span> <span class="nv">do</span> <span class="nv">JavaScript</span> <span class="s2">&quot; </span>
+<span class="s2">		function extractEmails ( text ){</span>
+<span class="s2">			return text.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9._-]+)/gi);</span>
+<span class="s2">		};</span>
+<span class="s2">		var x,</span>
+<span class="s2">		z,</span>
+<span class="s2">		i;</span>
+<span class="s2">		x = &#39;&quot;</span> <span class="o">&amp;</span> <span class="nv">searchTerm</span> <span class="o">&amp;</span> <span class="s2">&quot;&#39;;</span>
+<span class="s2">		if (x) {</span>
+<span class="s2">		if (extractEmails(x)) {</span>
+<span class="s2">			x = (extractEmails(x));</span>
+<span class="s2">			};</span>
+<span class="s2">		     z = 1;    </span>
+<span class="s2">		for (i = 0; i &lt; 1; ++i) {</span>
+<span class="s2">			sndT = &#39;https://people.us.oracle.com/pls/oracle/f?p=8000:1::::RP,RIR:P1_SEARCH,P1_SEARCH_TYPE:&#39; + x + &#39;,People&#39;;</span>
+<span class="s2">			popup_window = window.open(sndT);</span>
+<span class="s2">		}</span>
+
+
+<span class="s2">		};</span>
+<span class="s2">		&quot;</span> <span class="k">in</span> <span class="na">document</span> <span class="mi">1</span>
+	<span class="k">end</span> <span class="k">tell</span>
+<span class="k">end</span> <span class="nb">run</span></code></pre></div>
+
+
+            
+            <div class="tags">
+<a href="/tag/Apple">Apple</a>
+<a href="/tag/Dev">Dev</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Applescript Workflow Fails When No Safari Window Open" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2014/04/09/the-web-is-dead-long-live-the-web/">&laquo; The Web Is Dead, Long Live the Web</a> 
+                 
+                 
+                    <a class="next-post" href="/2014/04/22/the-first-iphone/">The First iPhone &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

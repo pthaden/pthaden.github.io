@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nav Drawer is the New QuickStart &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Nav Drawer is the New QuickStart ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2016/08/22/navdrawer-is-the-new-quickstart/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Nav Drawer is the New QuickStart "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2016/08/22/navdrawer-is-the-new-quickstart/"/>
+    
+    
+    <meta property="og:description" content="Dissecting the new Yeoman templates in OracleJET 2.1.0 "/>
+    <meta name="description" content="Dissecting the new Yeoman templates in OracleJET 2.1.0 "/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2016-22-August" title="August 22, 2016">August 22, 2016</time>
+            </div>
+            <h1 class="title">Nav Drawer is the New QuickStart</h1>
+            </header>
+
+        <section>
+            <p>With the release of Oracle JET 2.1.0, there are new “starters”–templates that make for quick setup on a new JET project and show some best practices for code structure. You use the new templates via the same <a href="http://docs.oracle.com/middleware/jet202/jet/developer/GUID-ACB7BD4E-BAAC-4A9E-B52A-6B2933CD222C.htm#GUID-F9B1A1E1-2814-49A0-A59A-0ADAAEFC5E93">Yeoman scaffolding process</a> for a starting a new project.</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">yo oraclejet jet210navdrawer --template<span class="o">=</span>navdrawer</code></pre></div>
+
+<p>[Edit:]  If the <code>navdrawer</code> option doesn’t work for you, you may need to update your Yeoman generators to get the latest <code>generator-oraclejet</code>. Either do the update through Yeoman’s menu system by executing <code>yo</code> at the command line, or use this command:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">npm update generator-oraclejet -g</code></pre></div>
+
+<p>[/end Edit]</p>
+
+<p>In the past there were only two templates: <code>blank</code> for a bare-bones minimal JET scaffolded project with no router, navigation, or sample content views/viewmodels, and <code>basic</code> for a QuickStart project. In JET v2.1.0, <code>blank</code> and <code>basic</code> are still there but now produce different assets–both rather basic–and they are joined by two newcomers: <code>navbar</code> and <code>navdrawer</code>. Descriptions and links to demos are under the ‘Starters’ section of the <a href="http://www.oracle.com/webfolder/technetwork/jet/globalExamples.html">JET examples landing page</a>.</p>
+
+<p>The <code>blank</code> template is now truly blank: it produces a JET project with no content at all and leaves it to you to implement routing and content components, but it does have the Alta styles, framework references, and Grunt tasks in place. The <code>basic</code> template is no longer QuickStart and is pretty blank itself, although it does at least have a header and footer in the index.html.</p>
+
+<p>So where did QuickStart go? It’s been replaced by two new templates: <code>navbar</code> and <code>navdrawer</code>. <a href="http://www.oracle.com/webfolder/technetwork/jet/globalExamples-Starter-NavBar.html">Nav Bar</a> is the newest and transforms the navigation menu into a bar of icons when the smaller responsive breakpoints kick in.  <a href="http://www.oracle.com/webfolder/technetwork/jet/globalExamples-Starter-Drawer.html">Nav Drawer</a> will be more familiar to QuickStarters, as it uses the normally-hidden sidebar drawer to shrink down the menu at phone and tablet breakpoints.</p>
+
+<p>These two templates are otherwise identical and scaffold out a router and a few content pages. The three-column main content area of QuickStart is now a single full-width flexbox that gets its content from where the router tells it to. </p>
+
+<p>There are a few other changes under the hood. Application-wide configuration settings, such as for navigation and the router, have been moved into an <code>appController.js</code> module that gets pulled in by <code>main.js</code>. This is more modular and provides a pattern for your own global settings that could then be pulled into viewModels in your app as needed.</p>
+
+<p>The individual views and viewModels such as for the Dashboard and Incidents tabs (no more Home tab to delete) don’t do much, but it’s interesting that each of the sample viewModels draw attention to the <a href="https://docs.oracle.com/middleware/jet202/jet/developer/GUID-ABB82BD1-9B65-44D2-AE43-81A0A3A44453.htm#JETDG-GUID-ABB82BD1-9B65-44D2-AE43-81A0A3A44453">ojModule’s lifecycle handlers</a> by implementing stub methods such as <code>handleActivated</code> and <code>handleAttached</code>. These are empty methods on a newly-instantiated ojModule so having them blank here doesn’t do anything different, but seeing them in your face draws attention to the fact that you can hook into them whenever you use an ojModule (which the router does to swap in your main content).</p>
+
+<p>There’s a new <code>themes</code> folder under the site root that gets leveraged by the <code>grunt serve</code> tasks. <a href="http://www.oracle.com/webfolder/technetwork/jet/jetCookbook.html?component=theming&amp;demo=themename">Themes will let you define sets of styles</a> that can be swapped in and out at build time. Look for more to come around the <a href="http://www.oracle.com/webfolder/technetwork/jet/globalExamples-ThemeViewer.html">Theme Style Lab</a>.</p>
+
+<p>Another change is to the <code>/scripts/grunt</code> folder. This has been massively simplified <a href="http://likeahouseafire.com/2016/04/18/decoding-jets-grunt-scripts/">compared to earlier versions</a>. The two tasks are still <code>grunt serve</code> and <code>grunt build</code>, but the Oracle JET-specific tasks are <a href="https://www.npmjs.com/package/grunt-oraclejet">now imported from a grunt-oraclejet NPM module</a>.</p>
+
+<p>There are probably more cool things in these updated templates, but these stood out after a quick review.  I really liked using the QuickStart as a seed for my JET projects, and am looking forward to upgrading our team’s seed repo with the 2.1.0 changes in the Nav Drawer template. </p>
+
+
+            
+            <div class="tags">
+<a href="/tag/Oracle JET">Oracle JET</a>
+<a href="/tag/Yeoman">Yeoman</a>
+<a href="/tag/Grunt">Grunt</a>
+<a href="/tag/Dev">Dev</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Nav Drawer is the New QuickStart" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2016/06/09/parsing-jwt-in-apex/">&laquo; Parsing a Sales Cloud JWT after passing it into APEX</a> 
+                 
+                 
+                    <a class="next-post" href="/2016/08/24/swapping-in-data-jet-cookbook/">Swapping in External Data Sources for the JET Cookbook Examples &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

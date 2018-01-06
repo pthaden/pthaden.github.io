@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decoding JET's Grunt Scripts &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Decoding JET's Grunt Scripts ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2016/04/18/decoding-jets-grunt-scripts/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Decoding JET's Grunt Scripts "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2016/04/18/decoding-jets-grunt-scripts/"/>
+    
+    
+    <meta property="og:description" content="Tracing the Grunt tasks that come from the JET Yeoman generator"/>
+    <meta name="description" content="Tracing the Grunt tasks that come from the JET Yeoman generator"/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2016-18-April" title="April 18, 2016">April 18, 2016</time>
+            </div>
+            <h1 class="title">Decoding JET's Grunt Scripts</h1>
+            </header>
+
+        <section>
+            <p>If you’ve scaffolded out a JET QuickStart project using the Yeoman generator, you may have noticed some <a href="">Grunt</a> tooling in a <code>scripts</code> folder in the root of your project. If you haven’t, give it a try at the command prompt (assuming you <a href="http://yeoman.io/learning/index.html">already have Yeoman installed</a>):</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># this gets the JET generator installed once for all time</span>
+npm install -g generator-oraclejet
+
+<span class="c"># this generates a JET application with QuickStart_Basic template into a yoJET directory</span>
+yo oraclejet yoJET --template<span class="o">=</span>basic</code></pre></div>
+
+<p>After this runs, a message even tempts you regarding your new Grunt powers with the hint that you can change to the yoJET directory and run <code>grunt build</code> and <code>grunt serve</code>. </p>
+
+<p>So we know there are at least two Grunt tasks delivered in the Oracle JET Yeoman generator. But did you know they run differently in development mode vs. release mode? What other coolness lurks in the JET Grunt implementation?</p>
+
+<h2 id="a-leaned-down-gruntfilejs">A leaned-down Gruntfile.js</h2>
+<p>In the root of your generated yoJET application is a <code>Gruntfile.js</code> file. This is Grunt’s most important file, and in most projects it can get very long and cluttered with many lines of configuration for all of the Grunt tasks you want to set up.</p>
+
+<p>But in the generated version, you’ll see that things are lean and tidy. In fact, there’s none of the normal <code>grunt.loadNpmTasks()</code> calls nor endless configuration settings. Instead, the JET Grunt setups lean on <a href="https://github.com/firstandthird/load-grunt-config">grunt-load-config</a> and <a href="https://github.com/shootaroo/jit-grunt">jit-grunt</a> to implement the configs and load everything on the fly.</p>
+
+<h4 id="gruntfilejs">Gruntfile.js</h4>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="cm">/**</span>
+<span class="cm"> * Copyright (c) 2014, 2016, Oracle and/or its affiliates.</span>
+<span class="cm"> * The Universal Permissive License (UPL), Version 1.0</span>
+<span class="cm"> */</span>
+<span class="s2">&quot;use strict&quot;</span><span class="p">;</span>
+
+<span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">);</span>
+
+<span class="cm">/*</span>
+<span class="cm"> * Currently the tooling uses load-grunt-config to manage it&#39;s tasks.</span>
+<span class="cm"> * In future grunt plugin will be created for better management</span>
+<span class="cm"> */</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">grunt</span><span class="p">)</span> 
+<span class="p">{</span>
+  <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;jit-grunt&quot;</span><span class="p">)(</span><span class="nx">grunt</span><span class="p">,</span> <span class="p">{});</span>
+
+  <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;load-grunt-config&quot;</span><span class="p">)(</span><span class="nx">grunt</span><span class="p">,</span> 
+  <span class="p">{</span>
+    <span class="nx">configPath</span><span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">cwd</span><span class="p">(),</span> <span class="s2">&quot;scripts/grunt/config&quot;</span><span class="p">),</span>
+    
+    <span class="nx">jitGrunt</span><span class="o">:</span> 
+    <span class="p">{</span>
+      <span class="nx">customTasksDir</span><span class="o">:</span> <span class="s2">&quot;scripts/grunt/tasks&quot;</span>
+    <span class="p">},</span>
+
+    <span class="nx">data</span><span class="o">:</span> 
+    <span class="p">{</span>
+      <span class="nx">oraclejet</span><span class="o">:</span> 
+      <span class="p">{</span>
+        <span class="nx">ports</span><span class="o">:</span> 
+        <span class="p">{</span>
+          <span class="nx">server</span><span class="o">:</span> <span class="mi">8000</span><span class="p">,</span>
+          <span class="nx">livereload</span><span class="o">:</span> <span class="mi">35729</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">};</span></code></pre></div>
+
+<p>Notice that the <code>configPath</code> is being redirected to the <code>scripts/grunt/config</code> folder in our project. There’s a whole folder structure with Grunt settings created by the Yeoman generator:</p>
+
+<div class="full zoomable"><img src="/images/20160418/grunt-tree.png" /></div>
+
+<h2 id="whats-up-with-the-scripts-folder">What’s up with the Scripts folder</h2>
+<p>This structure is how <code>load-grunt-config</code> likes to think. By separating each Grunt task’s configs into their own files it keeps things orderly and easy to edit. Meanwhile, <code>jit-grunt</code> takes care of loading the node_modules plugins based upon the task names you use instead of loading them all up at the beginning of your Gruntfile. </p>
+
+<p>The <code>scripts/grunt/config</code> files fall into the proper naming pattern and contain the configurations that would normally be in the Gruntfile’s <code>grunt.initConfig()</code>. A module’s configs are stuffed into a <code>module.exports</code> object. However, note that the module’s config object notation changes ever so slightly: you don’t need the eponymous outer object named after the modules and can instead just export the meat of the Grunt module’s config. Compare, for example, the generated <code>scripts/grunt/config/clean.js</code> export with a <a href="https://github.com/gruntjs/grunt-contrib-clean#-all-tasks">sample Gruntfile config for grunt-contrib-clean</a> — there’s no outer <code>clean: {...}</code> object in the JET-generated case.</p>
+
+<p>The <code>scripts/grunt/common</code> folder contains importable variables used by the tasks and configs, such as <code>build.js</code> and <code>bowercopy.js.</code> These imports are more modular than the global values set in the Gruntfile’s <code>data: {}</code> object.</p>
+
+<p>Finally, under the <code>scripts/grunt/tasks</code> folder you’ll find our two seeded Grunt tasks: <code>build.js</code> and <code>serve.js</code>. These tasks can call the other modules with various targets or even set options based upon which target you call the task with.</p>
+
+<h2 id="out-of-the-box-grunt-commands">Out-of-the-box Grunt commands</h2>
+
+<p>So the fresh-from-the-generator setup for a JET project includes at least the following Grunt tasks:</p>
+
+<ul>
+  <li><code>grunt serve</code> (same as <code>grunt serve:dev</code>) – spins up a webserver pointing at your project code, watches for changes to your files, and uses liveReload to refresh the browser upon changes</li>
+  <li><code>grunt build</code> (same as <code>grunt build:dev</code>) – doesn’t do anything. Even though the <code>:dev</code> target is the default, there isn’t anything to “build” since the dev files are served directly out of the project root</li>
+  <li><code>grunt build:release</code> – runs a boatload of tasks which create a <code>/release</code> folder in the root of the project and then copy the code and assets needed to deploy your JET project. Notice that the tasks that run include uglifying your JavaScript and moving copies of the Bower-sourced libraries into place</li>
+  <li><code>grunt serve:release</code> – spins up a webserver that points at that <code>/release</code> folder so you can verify that everything built correctly before deploying to a production webserver</li>
+  <li><code>grunt bowercopy</code> – an interesting task that copies specified files from the bower_components directory into the js/libs directory. The Yeoman generator accomplishes this when it scaffolds out your project, as you can see (for example inside of <code>main.js</code>) that everything points to the supporting files in the <code>/js/libs/</code> folders. But if you later use <code>bower install</code> to add an additional library of your own to your project, you’ll want to update the <code>scripts/grunt/config/bowercopy.js</code> file and then rerun <code>grunt bowercopy</code> so that your new dependencies are “inside” your project instead of referencing them straight out of the <code>bower_components</code> folders</li>
+</ul>
+
+<p>Understanding the way JET leverages <code>load-grunt-config</code> and how the files in the <code>scripts/grunt</code> folders work together opens up the possibility of tweaking the Grunt tasks to match our build process, and also gives us the knowledge needed to add additional Grunt modules to our projects.</p>
+
+            
+            <div class="tags">
+<a href="/tag/Oracle JET">Oracle JET</a>
+<a href="/tag/JavaScript">JavaScript</a>
+<a href="/tag/Dev">Dev</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Decoding JET's Grunt Scripts" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2016/02/25/passing-data-into-ojmodules/">&laquo; Passing Data into ojModules</a> 
+                 
+                 
+                    <a class="next-post" href="/2016/04/20/add-grunt-plugin-to-jet/">Adding a Grunt Plugin to JET &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

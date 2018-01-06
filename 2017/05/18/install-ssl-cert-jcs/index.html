@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Install a SSL Certificate Directly onto Java Cloud Service &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Install a SSL Certificate Directly onto Java Cloud Service ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2017/05/18/install-ssl-cert-jcs/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Install a SSL Certificate Directly onto Java Cloud Service "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2017/05/18/install-ssl-cert-jcs/"/>
+    
+    
+    <meta property="og:description" content="Use SSH access and cheap certificates to run SSL for reals on on your demo and prototype JCS servers"/>
+    <meta name="description" content="Use SSH access and cheap certificates to run SSL for reals on on your demo and prototype JCS servers"/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2017-18-May" title="May 18, 2017">May 18, 2017</time>
+            </div>
+            <h1 class="title">Install a SSL Certificate Directly onto Java Cloud Service</h1>
+            </header>
+
+        <section>
+            <p>When you provision an Oracle Java Cloud Service (JCS) instance, you get a full Weblogic server with a real IP address on the public internet, configured (via Compute Cloud) to listen for http on port 80 and https on port 443. What you don’t get is a DNS entry for your server nor a SSL certificate – you’re responsible for setting these up yourself.</p>
+
+<p>What this means is when you surf to a https:// flavor of URL for your freshly-created server, your browser will alert you that the demo SSL certificates are invalid:</p>
+
+<div class="full zoomable"><img src="/images/20170518/privacy-error-firefox.png" /></div>
+
+<p>If this is just a prototype server, maybe you’re alright with clicking through and telling the browser that things are safe.  Putting up with the red line through the <span style="color: red"><del>https</del></span>:// in the address bar is not a big deal.  However, we had a need to reconfigure a demo JCS server with real, valid SSL certificates so that we could embed our content inside other servers with valid SSL certs.</p>
+
+<p>Now <a href="https://docs.oracle.com/cloud/latest/jcs_gs/JSCUG/GUID-B862044D-A55B-48D3-A3E2-CC2D55A8279B.htm">there’s an official way to do this properly</a>, but that process requires a Load Balancer node for each JCS instance each of which consumes an OCPU. In our trial environment, we had a limited quota of OCPUs. Instead of registering our SSL certificates the right way through the Oracle Cloud wizards, the following steps configure the Weblogic server directly with a real SSL certificate:</p>
+
+<ul id="markdown-toc">
+  <li><a href="#register-your-domain-and-add-dns-entry-for-your-jcs-servers-public-ip">Register your domain and add DNS entry for your JCS server’s public IP</a></li>
+  <li><a href="#get-ssh-access-to-your-jcs-vm-server">Get SSH access to your JCS VM server</a></li>
+  <li><a href="#create-a-keystore-and-a-csr">Create a keystore and a CSR</a></li>
+  <li><a href="#request-and-obtain-a-ssl-certificate">Request and Obtain a SSL Certificate</a></li>
+  <li><a href="#import-the-certificate-into-your-keystore">Import the certificate into your keystore</a></li>
+  <li><a href="#configure-weblogic-to-use-the-keystore">Configure Weblogic to use the keystore</a></li>
+  <li><a href="#test-and-revel-in-your-success">Test and revel in your success</a></li>
+</ul>
+
+<p>Before we begin, I just want to emphasize that this is not the approved way to do SSL on JCS.  While it will get you through in a pinch if all you need is a valid https connection, it is definitely not an official supported configuration.  But hey, JCS is Weblogic underneath, and you might find these are good instructions even if you’re just setting up SSL on an on-premise server.</p>
+
+<h2 id="register-your-domain-and-add-dns-entry-for-your-jcs-servers-public-ip">Register your domain and add DNS entry for your JCS server’s public IP</h2>
+
+<p>Assuming you don’t already have a corporate domain and the DNS infrastructure in place to support it, the first step is to pick a domain name, register it, and then add a DNS <code>A</code> record pointing at your JCS server.</p>
+
+<p>I used <a href="https://dnsimple.com/">DNSimple</a> to register a custom domain name and then added an <code>A</code> record for my JCS public IP address.</p>
+
+<div class="full zoomable"><img src="/images/20170518/dnsimple-a-record.png" /></div>
+
+<p>The important thing is that you have access to the email address used for the domain administrator (even if it’s hidden behind Whois privacy protect; that’s fine), since we’ll be using that to verify you own the domain when we register the SSL certificate, below.</p>
+
+<h2 id="get-ssh-access-to-your-jcs-vm-server">Get SSH access to your JCS VM server</h2>
+
+<p>We’re going to get down in the weeds here so we’ll need <a href="http://www.oracle.com/webfolder/technetwork/tutorials/obe/cloud/javaservice/JCS/JCS_SSH/create_sshkey.html">shell access to the VM</a> that the JCS Weblogic server is running on.</p>
+
+<p>You’ll <a href="https://confluence.atlassian.com/bitbucketserver/creating-ssh-keys-776639788.html">need a pair of SSH keys generated</a> on your computer so that you can upload your public key to the JCS server. </p>
+
+<p>Navigate to the JCS Service Console and pull down the hamburger menu for your JCS instance. Choose <code>SSH Access</code> and upload your new SSH Public Key file. This process will reboot the VM that your JCS instance is running on, so make sure you schedule for the outage.</p>
+
+<div class="full zoomable"><img src="/images/20170518/ssh-access-keys.png" /></div>
+
+<p>After the reboot, if everything worked right, you should be able to <a href="https://docs.oracle.com/cloud/latest/computecs_common/OCSUG/GUID-D947E2CC-0D4C-43F4-B2A9-A517037D6C11.htm#OCSUG-GUID-D947E2CC-0D4C-43F4-B2A9-A517037D6C11">use your private .ssh key to access the shell prompt</a> on your JCS VM. You’ll connect as the <code>opc</code> user and use the JCS VM’s IP address for the host:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">ssh opc@123.45.67.89</code></pre></div>
+
+<h2 id="create-a-keystore-and-a-csr">Create a keystore and a CSR</h2>
+
+<p>Once you’re connected you’re logged in as the <code>opc</code> user, but that user has very little access to the juicy parts of your Weblogic installation. However, the <code>opc</code> user does have <code>sudo</code>, so you can become the <code>oracle</code> user:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>opc@myjcsserver ~<span class="o">]</span><span class="nv">$ </span>sudo su - oracle</code></pre></div>
+
+<p>Now you can start setting up the SSL keystores as the <code>oracle</code> user, and Weblogic will be able to load your certificates because it will have the proper file system permissions.  I sourced the $DOMAIN_HOME environment out of habit:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">-bash-4.1<span class="nv">$ </span><span class="nb">cd</span> /u01/data/domains/myjcsser_domain/bin
+-bash-4.1<span class="nv">$ </span>./setDomainEnv.sh   <span class="c"># source the environment vars for weblogic domain</span></code></pre></div>
+
+<p>Next, you need a place to put the keystore. I stuck mine in a shallow directory I knew I’d remember later when I needed to key it into the Weblogic admin console:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">-bash-4.1<span class="nv">$ </span>mkdir /u01/data/keystores <span class="o">&amp;&amp;</span> <span class="nb">cd</span> <span class="nv">$_</span></code></pre></div>
+
+<p>Our final steps for this phase are to create a keystore and then a certificate signing request to send to our SSL provider. First you’ll use <code>keytool</code> to create a keystore and generate a key pair all at the same time.  Then you’ll used <code>keytool</code> again to create a certificate signing request (CSR) file.  Last you’ll spool that CSR file to the screen:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">-bash-4.1<span class="nv">$ </span>keytool -genkeypair <span class="se">\</span>
+ -alias myjcsserver_cert <span class="se">\</span>
+ -keyalg RSA <span class="se">\</span>
+ -sigalg SHA256withRSA -keysize <span class="m">2048</span> <span class="se">\</span>
+ -dname <span class="s2">&quot;CN=myjcsserver.orclpaas.com,OU=NAA Sales Consulting,O=Oracle Corporation,L=Redwood City,ST=California,C=US&quot;</span> <span class="se">\</span>
+ -keypass myKEYpwdis#1 <span class="se">\</span>
+ -keystore keystore.jks <span class="se">\</span>
+ -storepass mySTOREpwdis#1too
+
+-bash-4.1<span class="nv">$ </span>keytool -certreq -v <span class="se">\</span>
+ -alias myjcsserver_cert <span class="se">\</span>
+ -file myjcsserver-orclpaas-com_cert.csr <span class="se">\</span>
+ -keypass myKEYpwdis#1 <span class="se">\</span>
+ -keystore keystore.jks <span class="se">\</span>
+ -storepass mySTOREpwdis#1too
+
+Certification request stored in file &lt;myjcsserver-orclpaas-com_cert.csr&gt;
+Submit this to your CA
+
+-bash-4.1<span class="nv">$ </span>cat myjcsserver-orclpaas-com_cert.csr
+-----BEGIN NEW CERTIFICATE REQUEST-----
+MIIDDjCCAfYCAQAwgZgxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlh
+MRUwEwYDVQQHEwxSZWR3b29kIENpdHkxGzAZBgNVBAoTEk9yYWNsZSBDb3Jwb3Jh
+dGlvbjEdMBsGA1UECxMUTkFBIFNhbGVzIENvbnN1bHRpbmcxITAfBgNVBAMTGG15
+...blahblahblahthisgoesonforawhile...TYlXaaRcchwNdRgFGzFc5vz5kxh
+RaQ8H4L05gbBxI7RHAhjsZNrO2M2atUFjhhVk08z1ojlqjEKlYCgt6nMYigdFvRF
+VKGnrp6DOGjQ+t9DGpyLZ7xU
+-----END NEW CERTIFICATE REQUEST-----</code></pre></div>
+
+<p>The first step will create a new <code>/u01/data/keystores/keystore.jks</code> file. Use your fully-qualified distinguished name, and make note of the key password and store password, as you’ll need them in later steps and when you configure Weblogic.</p>
+
+<p>The second step registers a signing request inside the keystore and then creates a CSR file you can use to initiate the process with your certificate authority.  Copy that echoed-out CSR to the clipboard: you’ll need it in the next step when you request your SSL certificate.</p>
+
+<h2 id="request-and-obtain-a-ssl-certificate">Request and Obtain a SSL Certificate</h2>
+
+<p>There are lots of vendors who will provide trusted SSL certificates to match your DNS domain.  Your company may already have an arrangement with one of these vendors, and you should follow their process if your hostname falls under their DNS.</p>
+
+<p>Since I created my own DNS domain with DNSimple, at first I attempted to use their SSL Certificates process to broker a cert from Comodo but had a lot of grief with their automated support.  So a better solution for me was to go with <a href="https://cheapsslsecurity.com/">Cheap$$L Security</a> to get a RapidSSL certificate.</p>
+
+<p>BTW, LetsEncrypt is a newer player on the SSL scene, and their free certificates had great appeal for our prototype project, but the 90-day limit on certificates before they expire and the work it would take to automate the process on the JCS compute node wasn’t worth the hassle compared to a few bucks for a cheap SSL cert, IMHO.</p>
+
+<p>If you, like me, are managing your own DNS domain you can choose one of the cheapest Domain Validation certificates – especially since this is just for prototyping.  If this were for a production server or for doing eCommerce, you might want to shell out for a Extended Validated so that your users might put more trust in you because they get better feedback in the browsers’ address bars.  Like we said before, these steps are already a hack:  you shouldn’t be following these steps for anything production!</p>
+
+<p>Another option you might consider, even though it’s more expensive:  if you’re going to do a lot of SSL certificates or be renaming your DNS entries for your prototypes, a wildcard certificate is a lot easier to work with as you don’t have to register each and every DNS hostname with a unique CSR.  However, these steps assume a single-hostname certificate request.</p>
+
+<p>So click the <a href="https://cheapsslsecurity.com/rapidssl/rapidsslcertificate.html">Buy Now button for the RapidSSL Certificate</a>.  I chose just a one-year cert and added it to my cart. Fill out the order details, press Complete Order, and the next step is to begin the enrollment process by clicking the Begin Now button:</p>
+
+<div class="full zoomable"><img src="/images/20170518/purchasemade.png" /></div>
+
+<p>Fill in the fields as follows:</p>
+
+<ol>
+  <li>Select Your Order Type:  New</li>
+  <li>Switching from Another SSL Brand?:  No</li>
+  <li>Choose your Automated Authentication Option:  Email Authentication</li>
+  <li>Input CSR (Certificate Signing Request):  paste in your certificate request text copied from the JCS VM’s command prompt above</li>
+  <li>Select Your Server:  Weblogic - all versions</li>
+  <li>Select the Signature Algorithm:  SHA-2</li>
+</ol>
+
+<div class="full zoomable"><img src="/images/20170518/pasteCSR.png" /></div>
+
+<p>Click the Continue button.  The server will read your CSR and ask you to confirm the details:</p>
+
+<ol>
+  <li>Confirm The Domain You Submitted:  this should be autofilled from the CSR, if the <code>keytool</code> steps went correctly</li>
+  <li>Confirm Your Information:  this is the dname embedded in the CSR</li>
+  <li>Select Approver Email Address:  the emails listed come from the domain you registered above.  I picked the first one which was obscured by whoisprivacyprotect.com.  Remember that you’ll need to have access to the email account so that you can reply to the RapidSSL email verification process</li>
+  <li>Site Administrator Contact Information:  you need to fill these all in, even if they are the same</li>
+  <li>Subscriber Agreement:  agree to the terms</li>
+</ol>
+
+<p>Click Continue.</p>
+
+<p>The next step will arrive in your inbox.  If it doesn’t come through, you can return to the CheapSSL Security website and check your Incomplete Orders under My Account and reprocess the form.</p>
+
+<p>You should get an email from sslorders@geotrust.com asking you to click a URL to review and approve the certificate request.  This is how they confirm that you own the domain that you are requesting a certificate for.  Click the link and then click the “I Approve” button on the RapidSSL.com website.</p>
+
+<div class="full zoomable"><img src="/images/20170518/rapidsslapproval.png" /></div>
+
+<p>The last step will also arrive in your inbox.  The actual certificate will arrive along with an intermediate certificate.  You’ll use these in the next step.</p>
+
+<div class="full zoomable"><img src="/images/20170518/emailcertificate.png" /></div>
+
+<h2 id="import-the-certificate-into-your-keystore">Import the certificate into your keystore</h2>
+
+<p>Return back to the terminal, logged into your JCS VM and switched to the oracle user.  If you need to login and sudo over again, follow the steps above.  Make sure you’re in the <code>/u01/data/keystores</code> directory.</p>
+
+<p>We need to get the certificate in your email onto the filesystem of your JCS VM.  There are many ways to do this, but I used vim to paste the contents copied from the email and then saved it into a file.  Just be sure to grab the right certificate for the web server, and copy everything from and including <code>-----BEGIN CERTIFICATE-----
+</code> to <code>-----END CERTIFICATE-----
+</code>.</p>
+
+<p>You can use this command line redirect trick to create a file from a paste, remembering to press <code>Ctrl-D</code> when done to close the file:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">-bash-4.1<span class="nv">$ </span>cat &gt; myjcsserver-orclpaas-com_cert.cer
+-----BEGIN CERTIFICATE-----
+MIIFdDCCBFygAwIBAgIQbSktxL1fUSvI5rVMBVd80DANBgkqhkiG9w0BAQsFADBC
+MQswCQYDVQQGEwJVUzEWMBQGA1UEChMNR2VvVHJ1c3QgSW5jLjEbMBkGA1UEAxMS
+...blahblahblahreallyreallylong...+bu5y+VZTMPisjqqiw/VLZO37jdspK
+Hl5z6sYPcml3AjoPYBOPAyQnpd8h3SVkAxH08TNzr1ZYqwB2WaS7a1Ag6S2g7pTr
+W8nOc8muh5MSVEbsKCp2KeFhiEDf4EG9JR2KkVmPWSikxJd+AGeRSyJyDEbioPCd
+<span class="nv">BXVmvVaScvQ</span><span class="o">=</span>
+-----END CERTIFICATE-----
+
+<span class="o">(</span>**press Ctrl-D, twice <span class="k">if</span> you forget to press enter after the last line**<span class="o">)</span></code></pre></div>
+
+<p>We need to also create a file for the intermediate certificate for RapidSSL.  Again, copy all of the intermediate cert text including the <code>BEGIN</code> and <code>END</code> lines and create a file on the server:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">-bash-4.1<span class="nv">$ </span>cat &gt; intermediate.cer
+-----BEGIN CERTIFICATE-----
+MIIETTCCAzWgAwIBAgIDAjpxMA0GCSqGSIb3DQEBCwUAMEIxCzAJBgNVBAYTAlVTMRYwFAYDVQQK
+Ew1HZW9UcnVzdCBJbmMuMRswGQYDVQQDExJHZW9UcnVzdCBHbG9iYWwgQ0EwHhcNMTMxMjExMjM0
+NTUxWhcNMjIwNTIwMjM0NTUxWjBCMQswCQYDVQQGEwJVUzEWMBQGA1UEChMNR2VvVHJ1c3QgSW5j
+LjEbMBkGA1UEAxMSUmFwaWRTU0wgU0hBMjU2IENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+CgKCAQEAu1jBEgEul9h9GKrIwuWF4hdsYC7JjTEFORoGmFbdVNcRjFlbPbFUrkshhTIWX1SG5tmx
+2GCJa1i+ctqgAEJ2sSdZTM3jutRc2aZ/uyt11UZEvexAXFm33Vmf8Wr3BvzWLxmKlRK6msrVMNI4
+/Bk7WxU7NtBDTdFlodSLwWBBs9ZwF8w5wJwMoD23ESJOztmpetIqYpygC04q18NhWoXdXBC5VD0t
+A/hJ8LySt7ecMcfpuKqCCwW5Mc0IW7siC/acjopVHHZDdvDibvDfqCl158ikh4tq8bsIyTYYZe5Q
+Q7hdctUoOeFTPiUs2itP3YqeUFDgb5rE1RkmiQF1cwmbOwIDAQABo4IBSjCCAUYwHwYDVR0jBBgw
+FoAUwHqYaI2J+6sFZAwRfap9ZbjKzE4wHQYDVR0OBBYEFJfCJ1CewsnsDIgyyHyt4qYBT9pvMBIG
+A1UdEwEB/wQIMAYBAf8CAQAwDgYDVR0PAQH/BAQDAgEGMDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6
+Ly9nMS5zeW1jYi5jb20vY3Jscy9ndGdsb2JhbC5jcmwwLwYIKwYBBQUHAQEEIzAhMB8GCCsGAQUF
+BzABhhNodHRwOi8vZzIuc3ltY2IuY29tMEwGA1UdIARFMEMwQQYKYIZIAYb4RQEHNjAzMDEGCCsG
+AQUFBwIBFiVodHRwOi8vd3d3Lmdlb3RydXN0LmNvbS9yZXNvdXJjZXMvY3BzMCkGA1UdEQQiMCCk
+HjAcMRowGAYDVQQDExFTeW1hbnRlY1BLSS0xLTU2OTANBgkqhkiG9w0BAQsFAAOCAQEANevhiyBW
+lLp6vXmp9uP+bji0MsGj21hWID59xzqxZ2nVeRQb9vrsYPJ5zQoMYIp0TKOTKqDwUX/N6fmS/Zar
+RfViPT9gRlATPSATGC6URq7VIf5Dockj/lPEvxrYrDrK3maXI67T30pNcx9vMaJRBBZqAOv5jUOB
+8FChH6bKOvMoPF9RrNcKRXdLDlJiG9g4UaCSLT+Qbsh+QJ8gRhVd4FB84XavXu0R0y8TubglpK9Y
+Ca81tGJUheNI3rzSkHp6pIQNo0LyUcDUrVNlXWz4Px8G8k/Ll6BKWcZ40egDuYVtLLrhX7atKz4l
+<span class="nv">ecWLVtXjCYDqwSfC2Q7sRwrp0Mr82A</span><span class="o">==</span>
+-----END CERTIFICATE-----
+
+<span class="o">(</span>**press Ctrl-D, again twice <span class="k">if</span> you forget to press enter after the last line**<span class="o">)</span></code></pre></div>
+
+<p>Now we have files we can use <code>keytool</code> to import back into the keystore, and it should match our CSR request from earlier.  </p>
+
+<p>Let’s import the intermediate cert first:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">-bash-4.1<span class="nv">$ </span>keytool -import <span class="se">\</span>
+ -trustcacerts <span class="se">\</span>
+ -alias RapidSSLIntermediate <span class="se">\</span>
+ -file intermediate.cer <span class="se">\</span>
+ -keystore keystore.jks <span class="se">\</span>
+ -storepass mySTOREpwdis#1too
+
+Certificate was added to keystore</code></pre></div>
+
+<p>Now, import the host certificate and note that it sees it as a reply:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">-bash-4.1<span class="nv">$ </span>keytool -import <span class="se">\</span>
+ -trustcacerts <span class="se">\</span>
+ -alias myjcsserver_cert <span class="se">\</span>
+ -file myjcsserver-orclpaas-com_cert.cer <span class="se">\</span>
+ -keypass myKEYpwdis#1 <span class="se">\</span>
+ -keystore keystore.jks <span class="se">\</span>
+ -storepass mySTOREpwdis#1too
+
+Certificate reply was installed in keystore</code></pre></div>
+
+<p>You’ve now got a valid keystore, registered for your DNS hostname and ready to be used by Weblogic.  For fun, you can validate that the certificate chain is valid with this command:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">java -cp /u01/app/oracle/middleware/wlserver/server/lib/weblogic.jar utils.ValidateCertChain -jks myjcsserver_cert keystore.jks
+
+Cert<span class="o">[</span>0<span class="o">]</span>: <span class="nv">CN</span><span class="o">=</span>myjcsserver.orclpaas.com
+Cert<span class="o">[</span>1<span class="o">]</span>: <span class="nv">CN</span><span class="o">=</span>RapidSSL SHA256 CA,O<span class="o">=</span>GeoTrust Inc.,C<span class="o">=</span>US
+Cert<span class="o">[</span>2<span class="o">]</span>: <span class="nv">CN</span><span class="o">=</span>GeoTrust Global CA,O<span class="o">=</span>GeoTrust Inc.,C<span class="o">=</span>US
+Certificate chain appears valid</code></pre></div>
+
+<h2 id="configure-weblogic-to-use-the-keystore">Configure Weblogic to use the keystore</h2>
+
+<p>The last step is to reconfigure the Weblogic managed server to use the new keystore settings.  Navigate to the Admin server for your JCS instance and sign in as the weblogic admin user.</p>
+
+<p>Lock and Edit your domain, then navigate to Environment » Servers » managed server name » Configuration » Keystores tab.</p>
+
+<p>Set the Keystores tab settings as follows:</p>
+
+<ul>
+  <li>Keystores:  Custom Identity and Java Standard Trust</li>
+  <li>Custom Identity Keystore:  /u01/data/keystores/keystore.jks</li>
+  <li>Custom Identity Keystore Type:  JKS</li>
+  <li>
+    <p>Custom Identity Keystore Passphrase:  mySTOREpwdis#1too</p>
+  </li>
+  <li>Java Standard Trust Keystore:  /u01/jdk/jre/lib/security/cacerts</li>
+  <li>Java Standard Trust Keystore Type:  jks</li>
+  <li>Java Standard Trust Keystore Passphrase:  changeit  (that is, unless you’ve changed it already)</li>
+</ul>
+
+<p>Save your changes.</p>
+
+<div class="full zoomable"><img src="/images/20170518/keystoresadmin.png" /></div>
+
+<p>Now click on the SSL tab and set the settings:</p>
+
+<ul>
+  <li>Identity and Trust Locations:  Keystores</li>
+  <li>Private Key Location: from Custom Identity Keystore</li>
+  <li>Private Key Alias:  myjcsserver_cert</li>
+  <li>Private Key Passphrase:  myKEYpwdis#1</li>
+  <li>Certificate Location: from Custom Identity Keystore</li>
+</ul>
+
+<div class="full zoomable"><img src="/images/20170518/ssladmin.png" /></div>
+
+<p>Click Save and then Activate Your Changes.</p>
+
+<p>Now even though it says that all changes have been activated and no restarts are necessary, I’ve found that restarting the managed server is needed because it won’t pick up the new keystore.</p>
+
+<p>Click on the Control tab for the managed server, then check the box next to the managed server.  Pull down Shutdown » Force Shutdown Now and wait a few moments for the task to complete, refreshing as necessary to see progress.  Then click Start to start the managed server back up.</p>
+
+<h2 id="test-and-revel-in-your-success">Test and revel in your success</h2>
+
+<p>You should now be able to navigate to the https version of your URLs with a valid certificate and a reassuring green lock in the address bar:</p>
+
+<div class="full zoomable"><img src="/images/20170518/sslsuccess.png" /></div>
+
+
+            
+            <div class="tags">
+<a href="/tag/JCS">JCS</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Install a SSL Certificate Directly onto Java Cloud Service" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2017/03/08/apex-rest-two-queries-one-endpoint/">&laquo; APEX REST: Two Separate SQL Queries, One RESTful Endpoint</a> 
+                 
+                 
+                    <a class="next-post" href="/2017/06/12/my-favorite-wwdc17-sessions/">My Favorite WWDC17 Sessions &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Stock Ticker WebService in Oracle Sales Cloud R9 &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Create a Stock Ticker WebService in Oracle Sales Cloud R9 ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2015/01/20/create-stock-ticker-webservice-osc-r9/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Create a Stock Ticker WebService in Oracle Sales Cloud R9 "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2015/01/20/create-stock-ticker-webservice-osc-r9/"/>
+    
+    
+    <meta property="og:description" content="How to hook up a Sales Cloud to an external SOAP Web Service"/>
+    <meta name="description" content="How to hook up a Sales Cloud to an external SOAP Web Service"/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2015-20-January" title="January 20, 2015">January 20, 2015</time>
+            </div>
+            <h1 class="title">Create a Stock Ticker WebService in Oracle Sales Cloud R9</h1>
+            </header>
+
+        <section>
+            <p>How to hook up a Sales Cloud to an external SOAP Web Service:</p>
+
+<h2 id="stockquote-web-service">StockQuote Web Service</h2>
+
+<p>We’ll use the StockQuote SOAP web service available online as of 20-Jan-2015 at:  <a href="http://www.webservicex.net/stockquote.asmx?op=GetQuote">http://www.webservicex.net/stockquote.asmx?op=GetQuote</a></p>
+
+<div class="full zoomable"><img src="/images/20150120/stockquote-web-service.png" /></div>
+
+<h2 id="create-the-web-service-in-sales-cloud-app-composer">Create the Web Service in Sales Cloud App Composer</h2>
+
+<p>Log into Sales Cloud as matt.hooper and create and activate a sandbox.  </p>
+
+<p>Launch App Composer and click on <strong>Web Services</strong> in the Common Setup tree.</p>
+
+<p>Click the <strong>Create Web Service Reference</strong> button on the toolbar to create a new entry.</p>
+
+<div class="full zoomable"><img src="/images/20150120/create-the-web-service-in-sales-cloud-app-composer.png" /></div>
+
+<h2 id="create-soap-web-service-connection">Create SOAP Web Service Connection</h2>
+
+<p>Fill in the details for the new web service:</p>
+
+<p>Name:  <strong>StockQuote</strong></p>
+
+<p>WSDL URL:  <a href="http://www.webservicex.net/stockquote.asmx?wsdl"><strong>http://www.webservicex.net/stockquote.asmx?wsdl</strong></a></p>
+
+<p>Click <strong>Read WSDL</strong> and give it a moment to retrieve the service details.</p>
+
+<div class="full zoomable"><img src="/images/20150120/create-soap-web-service-connection.png" /></div>
+
+<h2 id="refine-soap-connection-details">Refine SOAP Connection Details</h2>
+
+<p>The Service should be automatically selected as <a href="{http://www.webserviceX.NET/}StockQuote">{http://www.webserviceX.NET/}StockQuote</a> </p>
+
+<p>Change the <strong>Port</strong> to StockQuoteSoap12.</p>
+
+<p>Click <strong>None</strong> for the Security Scheme and then click <strong>Save and Close</strong></p>
+
+<div class="full zoomable"><img src="/images/20150120/refine-soap-connection-details.png" /></div>
+
+<h2 id="add-a-custom-field-to-the-account-object">Add a custom field to the Account Object</h2>
+
+<p>Navigate to the Application Common, Standard Objects tree and select <strong>Account » Fields</strong>.</p>
+
+<p>In the Custom tab, click on the <strong>Create a Custom Field</strong> button in the toolbar, then choose <strong>Formula</strong> and click OK.</p>
+
+<div class="full zoomable"><img src="/images/20150120/add-a-custom-field-to-the-account-object.png" /></div>
+
+<h2 id="formula-field-attributes">Formula Field Attributes</h2>
+
+<p>Create the field with the following details:</p>
+
+<p>Formula Type:  <strong>Text</strong></p>
+
+<p>Display Label: <strong>Latest Stock Price</strong></p>
+
+<p>Display Width: <strong>30</strong> characters</p>
+
+<p>Display Type:  <strong>Multiline Text Area</strong></p>
+
+<p>Name: <strong>LatestStockPrice</strong></p>
+
+<p>Click <strong>Next</strong></p>
+
+<div class="full zoomable"><img src="/images/20150120/formula-field-attributes.png" /></div>
+
+<h2 id="build-the-formula">Build the formula</h2>
+
+<p>Use the palette to build the formula, or simplly paste this text into the expression editor:</p>
+
+<div class="highlight"><pre><code class="language-groovy" data-lang="groovy"><span class="cm">/*</span>
+
+<span class="cm"> * StockTicker field formula</span>
+
+<span class="cm"> * last updated 20-Jan-2015</span>
+
+<span class="cm"> * see [http://www.webservicex.net/stockquote.asmx?op=GetQuote](http://www.webservicex.net/stockquote.asmx?op=GetQuote)</span>
+
+<span class="cm"> *</span>
+
+<span class="cm"> */</span>
+
+
+
+<span class="c1">// intialize return variable</span>
+
+<span class="kt">def</span> <span class="n">lastPrice</span> <span class="o">=</span> <span class="s2">&quot;UNKNOWN&quot;</span>
+
+
+
+<span class="c1">// build SOAP call with Account&#39;s StockSymbol field</span>
+
+<span class="c1">// wrapped in a nvl() in case the StockSymbol field is empty</span>
+
+<span class="kt">def</span> <span class="n">out</span> <span class="o">=</span> <span class="n">adf</span><span class="o">.</span><span class="na">webServices</span><span class="o">.</span><span class="na">StockQuote</span><span class="o">.</span><span class="na">GetQuote</span><span class="o">(</span><span class="n">nvl</span><span class="o">(</span><span class="n">StockSymbol</span><span class="o">,</span><span class="s2">&quot;&quot;</span><span class="o">))</span>
+
+
+
+<span class="c1">// these will be used to parse the CDATA returned by the call</span>
+
+<span class="kt">def</span> <span class="n">sLast</span> <span class="o">=</span> <span class="s1">&#39;&lt;Last&gt;&#39;</span>
+
+<span class="kt">def</span> <span class="n">eLast</span> <span class="o">=</span> <span class="s1">&#39;&lt;/Last&gt;&#39;</span>
+
+<span class="kt">def</span> <span class="n">sChange</span> <span class="o">=</span> <span class="s1">&#39;&lt;Change&gt;&#39;</span>
+
+<span class="kt">def</span> <span class="n">eChange</span> <span class="o">=</span> <span class="s1">&#39;&lt;/Change&gt;&#39;</span>
+
+<span class="kt">def</span> <span class="n">sTime</span> <span class="o">=</span> <span class="s1">&#39;&lt;Time&gt;&#39;</span>
+
+<span class="kt">def</span> <span class="n">eTime</span> <span class="o">=</span> <span class="s1">&#39;&lt;/Time&gt;&#39;</span>
+
+<span class="kt">def</span> <span class="n">sDate</span> <span class="o">=</span> <span class="s1">&#39;&lt;Date&gt;&#39;</span>
+
+<span class="kt">def</span> <span class="n">eDate</span> <span class="o">=</span> <span class="s1">&#39;&lt;/Date&gt;&#39;</span>
+
+
+
+<span class="c1">// find the starting position for last price</span>
+
+<span class="kt">def</span> <span class="n">sPosition</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">sLast</span><span class="o">)</span>
+
+<span class="kt">def</span> <span class="n">ePosition</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">eLast</span><span class="o">)</span>
+
+
+
+<span class="c1">// parse out just the sections of the out string between the tags only if &lt;Last&gt; was found</span>
+
+<span class="k">if</span> <span class="o">(</span> <span class="n">sPosition</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">)</span> <span class="o">{</span>
+
+  
+
+  <span class="n">lastPrice</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="n">sPosition</span> <span class="o">+</span> <span class="mi">6</span><span class="o">,</span> <span class="n">ePosition</span><span class="o">)</span> 
+
+  
+
+  <span class="n">sPosition</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">sChange</span><span class="o">)</span>
+
+  <span class="n">ePosition</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">eChange</span><span class="o">)</span>
+
+  <span class="n">lastPrice</span> <span class="o">+=</span> <span class="s1">&#39; (&#39;</span> <span class="o">+</span> <span class="n">out</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="n">sPosition</span> <span class="o">+</span> <span class="mi">8</span><span class="o">,</span> <span class="n">ePosition</span><span class="o">)+</span> <span class="s1">&#39;)\n&#39;</span>
+
+
+
+  <span class="n">sPosition</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">sTime</span><span class="o">)</span>
+
+  <span class="n">ePosition</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">eTime</span><span class="o">)</span>
+
+  <span class="n">lastPrice</span> <span class="o">+=</span> <span class="s1">&#39; as of &#39;</span> <span class="o">+</span> <span class="n">out</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="n">sPosition</span> <span class="o">+</span> <span class="mi">6</span><span class="o">,</span> <span class="n">ePosition</span><span class="o">)</span>
+
+  
+
+  <span class="n">sPosition</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">sDate</span><span class="o">)</span>
+
+  <span class="n">ePosition</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">eDate</span><span class="o">)</span>
+
+  <span class="n">lastPrice</span> <span class="o">+=</span> <span class="s1">&#39;,  &#39;</span> <span class="o">+</span> <span class="n">out</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="n">sPosition</span> <span class="o">+</span> <span class="mi">6</span><span class="o">,</span> <span class="n">ePosition</span><span class="o">)</span>
+
+  
+
+<span class="o">}</span>
+
+<span class="k">return</span> <span class="n">lastPrice</span></code></pre></div>
+
+<div class="full zoomable"><img src="/images/20150120/build-the-formula.png" /></div>
+
+<h2 id="place-the-formula-field-on-the-right-sui-page">Place the Formula Field on the Right SUI Page</h2>
+
+<p>Navigate to <strong>Account » Pages</strong> in the App Composer.</p>
+
+<p>Under <strong>Details Page Layouts</strong>, highlight the <strong>Default Layout</strong> and click the <strong>Edit Layout</strong> button</p>
+
+<div class="full zoomable"><img src="/images/20150120/place-the-formula-field-on-the-right-sui-page.png" /></div>
+
+<h2 id="edit-the-profile-subtab">Edit the Profile Subtab</h2>
+
+<p>Click on the <strong>Profile</strong> sidebar subtab, and then click the <strong>Edit</strong> pencil next to <strong>Summary</strong></p>
+
+<div class="full zoomable"><img src="/images/20150120/edit-the-profile-subtab.png" /></div>
+
+<h2 id="position-field-on-page">Position Field on Page</h2>
+
+<p>Scroll down the Available Fields to <strong>Latest Stock Price</strong> and click the right shuttle button to move it over.</p>
+
+<p>Use the <strong>Up</strong> button to positiion the new field underneath <strong>Stock Symbol</strong>.</p>
+
+<p>Click <strong>Save and Close</strong>.</p>
+
+<div class="full zoomable"><img src="/images/20150120/position-field-on-page.png" /></div>
+
+<h2 id="test-your-new-field">Test your new field</h2>
+
+<p>Navigate back to the home page, and then into <strong>Accounts</strong>.</p>
+
+<p>Search for an account name such as <strong>A. C. Networks</strong> or define a saved search.  Click on the account name link.</p>
+
+<p>On the Account subtabs, click the <strong>Profile</strong> tab (second from the top).</p>
+
+<p>The first time in, your Latest Stock Price will be UNKNOWN, because there is no ticker in the Stock Symbol field.</p>
+
+<div class="full zoomable"><img src="/images/20150120/test-your-new-field.png" /></div>
+
+<h2 id="ticker-data">Ticker Data!</h2>
+
+<p>Fill in the <strong>Stock Symbol</strong> field with a valid stock ticker symbol. </p>
+
+<p>Click **Save and Close **to return to the Accounts listing.</p>
+
+<p>Click again on the account name link and then on the Profile subtab.</p>
+
+<p>Note the updated stock price info in the <strong>Latest Stock Price</strong> field!</p>
+
+<div class="full zoomable"><img src="/images/20150120/ticker-data-.png" /></div>
+
+
+            
+            <div class="tags">
+<a href="/tag/Sales Cloud">Sales Cloud</a>
+<a href="/tag/Web Services">Web Services</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Create a Stock Ticker WebService in Oracle Sales Cloud R9" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2014/04/23/how-i-got-started-on-oracle-java-cloud/">&laquo; How I got Started on Oracle Java Cloud</a> 
+                 
+                 
+                    <a class="next-post" href="/2015/06/04/how-do-you-add-a-play-pause-bar-in-Swift/">How do you add a play/pause bar in Swift? &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>

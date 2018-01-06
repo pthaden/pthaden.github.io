@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passing Data into ojModules &mdash; Like A House Afire</title>
+    <link href="https://fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/assets/main.css">
+    <link rel="shortcut icon" href="/favicon.ico?v=2" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.gif?v=2" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/images/Avatar.png"/>
+    <link href="/feed.xml" rel="alternate" type="application/rss+xml" title="Like A House Afire" />
+    <meta name="title" content="Passing Data into ojModules ">
+    <link rel="canonical" href="http://www.likeahouseafire.com/2016/02/25/passing-data-into-ojmodules/">
+    <link rel="alternate" title="" type="application/json" href="http://www.likeahouseafire.com//feed.json" />
+     
+    <link rel="author" href="https://plus.google.com/111502137181170252947">       
+    <meta property="og:title" content="Passing Data into ojModules "/>
+    <meta property="og:url" content="http://www.likeahouseafire.com/2016/02/25/passing-data-into-ojmodules/"/>
+    
+    
+    <meta property="og:description" content="Creating submodules to iterate over an array and using the params: option to reference data from both a parent ojModule and its children. "/>
+    <meta name="description" content="Creating submodules to iterate over an array and using the params: option to reference data from both a parent ojModule and its children. "/>
+    
+    <meta property="og:site_name" content="Like A House Afire">     
+</head>
+<body>
+    
+<section class="site-nav">
+    <header>
+        <nav id="navigation">
+            <a class="brand" href="/">
+                <img src="/images/Avatar.png" alt="Inc">
+            </a>
+            <a href="/" class="home">Blog</a>
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+    </header>
+</section>
+
+
+<article>
+
+    <div class="container">
+        <header>
+            <div class="meta">
+                By <address><a rel="author" href="" title="Paul Thaden" target="_blank">Paul Thaden</a></address> &mdash;
+                <time pubdate datetime="2016-25-February" title="February 25, 2016">February 25, 2016</time>
+            </div>
+            <h1 class="title">Passing Data into ojModules</h1>
+            </header>
+
+        <section>
+            <p>Geertjan Wielenga recently published <a href="https://blogs.oracle.com/geertjan/entry/intermodular_communication_in_oracle_jet2">a series of articles on inter-module communication</a> with three great ways to get modules talking to each other, or at least sharing data. Here is a different trick I learned from <a href="http://jjmpsj.blogspot.com/">Jim Marion</a>, originally in the context of passing data to Knockout Components but reapplied here to Oracle JET modules.</p>
+
+<p>ojModules <a href="http://likeahouseafire.com/2016/01/23/modules-are-your-friends/">can be used to tidy up your codebase</a>, but they’re also useful for creating reusable blocks of code that you might iterate over to produce many copies of the same component, each with its own backing data. </p>
+
+<p>Using the <a href="http://www.oracle.com/webfolder/technetwork/jet/jsdocs/ojModule.html#Options">$params option for ojModule</a> we can pass data objects into the called submodule to be used and tweaked in the context of that module’s viewModel. Since JavaScript objects are pass-by-copy-of-reference, this means anything we add or change to the passed in $params object will still be there if we try to access it from the parent module.  This is because they’re pointing at the same thing in memory.</p>
+
+<p>So for example lets say we have a array of objects we want to iterate over and create index cards out of, <a href="http://www.oracle.com/webfolder/technetwork/jet/public_samples/WorkBetter/public_html/index.html?root=people">a la the WorkBetter demo</a>. Instead of creating all of the code for the card itself in the page’s view, we could instead create a module out of the cards. Then if we ever need to use cards again in a different part of our app, we already have the code set up as a module and can just reuse it.</p>
+
+<div class="full zoomable"><img src="/images/20160225/each-card-a-module.png" /></div>
+
+<h2 id="setting-up-the-parent-ojmodule">Setting up the parent ojModule</h2>
+<p>In our example, the module that the router calls when we click on the Employees tab is very simple. Think of it as the parent view for all of the children cards we’ll iterate over.</p>
+
+<h4 id="employeecardshtml-view">employeeCards.html view</h4>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;h1&gt;</span>Card Modules Content<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;h2&gt;</span>computed cards selected: <span class="nt">&lt;span</span> <span class="na">data-bind=</span><span class="s">&quot;text: computedCount&quot;</span><span class="nt">&gt;&lt;/span&gt;&lt;/h2&gt;</span>
+
+<span class="c">&lt;!-- ko foreach: allPeople()  --&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">data-bind=</span><span class="s">&quot;ojModule: {name: &#39;cards-modules/card&#39;,</span>
+<span class="s">                        params: $data }&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="c">&lt;!-- /ko --&gt;</span></code></pre></div>
+
+<p>Notice that there’s hardly any HTML in the parent. Basically just a Knockout <code>foreach</code> that iterates over an <code>allPeople</code> array. Notice also that we’re calling a module in a relative subdirectory named <code>cards-modules/card</code> and that each time we loop we’re passing in the <code>$data</code> binding as <code>params</code> for the current iteration of the foreach…more on that later.</p>
+
+<p>Here’s the backing viewModel for our parent view. Since this is demo data, the <code>allPeople</code> observable array is hard-coded but it could just as well be populated by a data retrieval function. There’s also a computed observable that returns a count of all cards in the data that have an <code>isSelected</code> member set to <code>true</code>.</p>
+
+<h4 id="employeecardsjs-viewmodel">employeeCards.js viewModel</h4>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;ojs/ojcore&#39;</span><span class="p">,</span> <span class="s1">&#39;knockout&#39;</span>
+<span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">oj</span><span class="p">,</span> <span class="nx">ko</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">function</span> <span class="nx">ViewModel</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+    <span class="nx">self</span><span class="p">.</span><span class="nx">allPeople</span> <span class="o">=</span> <span class="nx">ko</span><span class="p">.</span><span class="nx">observableArray</span><span class="p">([]);</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">allPeople</span><span class="p">([{</span>
+            <span class="s2">&quot;empId&quot;</span><span class="o">:</span> <span class="mi">205</span><span class="p">,</span>
+            <span class="s2">&quot;firstName&quot;</span><span class="o">:</span> <span class="s2">&quot;Shelley&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lastName&quot;</span><span class="o">:</span> <span class="s2">&quot;Higgins&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Accounting Director&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hireDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2010-01-01T00:00:00Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rating&quot;</span><span class="o">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s2">&quot;potential&quot;</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="o">:</span> <span class="s2">&quot;Accounting&quot;</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s2">&quot;empId&quot;</span><span class="o">:</span> <span class="mi">118</span><span class="p">,</span>
+            <span class="s2">&quot;firstName&quot;</span><span class="o">:</span> <span class="s2">&quot;Guy&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lastName&quot;</span><span class="o">:</span> <span class="s2">&quot;Himuro&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Purchasing Clerk&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hireDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2009-03-01T00:00:00Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;compRatio&quot;</span><span class="o">:</span> <span class="mi">63</span><span class="p">,</span>
+            <span class="s2">&quot;rating&quot;</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">&quot;potential&quot;</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="o">:</span> <span class="s2">&quot;Purchasing&quot;</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s2">&quot;empId&quot;</span><span class="o">:</span> <span class="mi">103</span><span class="p">,</span>
+            <span class="s2">&quot;firstName&quot;</span><span class="o">:</span> <span class="s2">&quot;Alexander&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lastName&quot;</span><span class="o">:</span> <span class="s2">&quot;Hunold&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;IT Director&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hireDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2006-07-14T00:00:00Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rating&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;potential&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="o">:</span> <span class="s2">&quot;IT&quot;</span>
+        <span class="p">},</span> <span class="p">{</span>
+            <span class="s2">&quot;empId&quot;</span><span class="o">:</span> <span class="mi">175</span><span class="p">,</span>
+            <span class="s2">&quot;firstName&quot;</span><span class="o">:</span> <span class="s2">&quot;Arthur&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;lastName&quot;</span><span class="o">:</span> <span class="s2">&quot;Hutton&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;title&quot;</span><span class="o">:</span> <span class="s2">&quot;Public Relations Reprentative&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;hireDate&quot;</span><span class="o">:</span> <span class="s2">&quot;2008-02-14T00:00:00Z&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;rating&quot;</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">&quot;potential&quot;</span><span class="o">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">&quot;deptName&quot;</span><span class="o">:</span> <span class="s2">&quot;Public Relations&quot;</span>
+        <span class="p">}]);</span>
+    
+    <span class="c1">// calculate number of selected cards when allPeople receives valueHasMutated()</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">computedCount</span> <span class="o">=</span> <span class="nx">ko</span><span class="p">.</span><span class="nx">computed</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="c1">//filter array for only the elements that have isSelected == true, then count the length of that filtered array</span>
+        <span class="kd">var</span> <span class="nx">countNewvalue</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">allPeople</span><span class="p">().</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">c</span><span class="p">)</span> <span class="p">{</span>
+                <span class="c1">// must check if the object even has an isSelected member, because it doesn&#39;t on the first pass</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">isSelected</span><span class="p">){</span>
+                    <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">isSelected</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}).</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">countNewvalue</span><span class="p">;</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">ViewModel</span><span class="p">;</span>
+<span class="p">});</span></code></pre></div>
+
+<p>But wait: looking at the hard-coded data for <code>allPeople</code>, there is no member for <code>isSelected</code>—at least not yet. That’s because we are going to add it inside of the <code>cards-modules/card</code> child module as the result of a click handler. But the cool thing is that we’ll be able to access that data here in the parent’s viewModel because of the way we pass the <code>$data</code> object.</p>
+
+<h2 id="setting-up-the-child-ojmodule">Setting up the child ojModule</h2>
+<p>The submodule’s HTML is unabashedly copied from the WorkBetter sample app, but it is only the index card code. Each time we iterate over the parent’s <code>allPeople</code> array, we’ll get one copy of this card HTML. </p>
+
+<h4 id="cards-modulescardhtml-view">cards-modules/card.html view</h4>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-col oj-sm-12 oj-md-6 oj-lg-4 oj-xl-3&quot;</span><span class="nt">&gt;</span>
+  <span class="c">&lt;!-- click handler toggleSelected() receives $parents from binding context  --&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-panel oj-panel-alt1&quot;</span> <span class="na">style=</span><span class="s">&quot;height: 226px; margin: 5px 0px 10px 0px;&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;click: function() {toggleSelected($parents)}&quot;</span><span class="nt">&gt;</span>
+
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-row&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-col oj-sm-4&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;img</span> <span class="na">class=</span><span class="s">&quot;demo-circular demo-employee-photo&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;attr: {src: getPhoto(cardData.empId)}&quot;</span><span class="nt">/&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-col oj-sm-8&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;demo-employee-name&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;text: cardData.firstName+ &#39; &#39; + cardData.lastName&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;demo-employee-title&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;text: cardData.title&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;demo-employee-dept&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;text: cardData.deptName&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-row&quot;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-col oj-sm-4&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;demo-employee-tenure&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;text: getTenure(cardData)&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;demo-employee-tenure-label&quot;</span><span class="nt">&gt;</span>Tenure<span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-col oj-sm-4&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;demo-employee-perf&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;text:cardData.rating, style: {color: cardData.rating &lt; 3 ? &#39;#e95b54&#39; : &#39;#309fdb&#39;}&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;demo-employee-perf-label&quot;</span><span class="nt">&gt;</span>Rating<span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-col oj-sm-4&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;demo-employee-perf&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;text:cardData.potential, style: {color: cardData.potential &lt; 3 ? &#39;#e95b54&#39; : &#39;#309fdb&#39;}&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;demo-employee-perf-label&quot;</span><span class="nt">&gt;</span>Potential<span class="nt">&lt;/div&gt;</span>
+      <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;oj-row&quot;</span><span class="nt">&gt;</span>
+        
+      <span class="c">&lt;!-- span to indicate whether card has been clicked into isSelected state --&gt;</span>
+      <span class="nt">&lt;span</span> <span class="na">style=</span><span class="s">&quot;float:left; color: green; font-size: 36px; margin-top: 20px&quot;</span> <span class="na">data-bind=</span><span class="s">&quot;visible: cardData.isSelected&quot;</span> <span class="na">class=</span><span class="s">&quot;fa fa-lg fa-check-circle-o&quot;</span><span class="nt">&gt;</span>is selected<span class="nt">&lt;/span&gt;</span>
+
+      <span class="nt">&lt;span</span> <span class="na">style=</span><span class="s">&quot;float: right;&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">data-bind=</span><span class="s">&quot;attr:{href: &#39;#&#39;}&quot;</span> <span class="na">role=</span><span class="s">&quot;img&quot;</span> <span class="na">title=</span><span class="s">&quot;Send this employee an email&quot;</span> <span class="na">class=</span><span class="s">&quot;demo-employee-email-icon&quot;</span><span class="nt">&gt;&lt;/a&gt;</span>
+        <span class="nt">&lt;a</span> <span class="na">data-bind=</span><span class="s">&quot;click: function(data, event){}, clickBubble: false&quot;</span> <span class="na">role=</span><span class="s">&quot;img&quot;</span> <span class="na">title=</span><span class="s">&quot;View this employees team members&quot;</span> <span class="na">class=</span><span class="s">&quot;demo-employee-org-icon&quot;</span><span class="nt">&gt;&lt;/a&gt;</span>
+      <span class="nt">&lt;/span&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span></code></pre></div>
+
+<p>To the WorkBetter code I added a span of green text that only shows when the card’s viewModel has an <code>isSelected</code> attribute set to <code>true</code>. We’ll see this is set by a <code>toggleSelected()</code> function in the viewModel.</p>
+
+<p>Also see how all of the fields’ <code>text</code> data is being bound to members of a <code>cardData</code> object in the backing viewModel. This is actually the data that got passed from the parent view when we called ojModule with the <code>params: $data</code> option. We unpack it in the viewModel code below.</p>
+
+<p>There is one other difference from the WorkBetter code: we’ve added the click handler for that <code>toggleSelected()</code> to the entire card panel’s div. But see how it’s not a normal <code>data-bind</code> reference? Instead, we’re calling anonymous function to pass in the context binding for <code>$parents</code> to our <code>toggleSelected</code> click handler. We need this <code>$parents</code> context inside of the viewModel, and I’ll explain why next.</p>
+
+<h4 id="cards-modulescardjs-viewmodel">cards-modules/card.js viewModel</h4>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">define</span><span class="p">([</span><span class="s1">&#39;ojs/ojcore&#39;</span><span class="p">,</span> <span class="s1">&#39;knockout&#39;</span>
+<span class="p">],</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">oj</span><span class="p">,</span> <span class="nx">ko</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="kd">function</span> <span class="nx">cardContentViewModel</span><span class="p">(</span><span class="nx">$params</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="c1">// assign the passed-in $params to a viewModel variable</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">cardData</span> <span class="o">=</span> <span class="nx">$params</span><span class="p">;</span>
+    
+    <span class="c1">// add a flag to the card to track &quot;selected&quot; state</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">cardData</span><span class="p">.</span><span class="nx">isSelected</span> <span class="o">=</span> <span class="nx">ko</span><span class="p">.</span><span class="nx">observable</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+
+    <span class="c1">// click handler for toggling a card&#39;s selected state</span>
+    <span class="c1">// gets $parents passed in from view&#39;s binding </span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">toggleSelected</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">$parents</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">self</span><span class="p">.</span><span class="nx">cardData</span><span class="p">.</span><span class="nx">isSelected</span><span class="p">(</span><span class="o">!</span><span class="nx">self</span><span class="p">.</span><span class="nx">cardData</span><span class="p">.</span><span class="nx">isSelected</span><span class="p">());</span>
+     
+      <span class="c1">// we need to tell the grandparent that we changed the data inside the array</span>
+      <span class="c1">// since the grandparent&#39;s allPeople observableArray won&#39;t fire subscriptions otherwise</span>
+      <span class="nx">$parents</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="nx">allPeople</span><span class="p">.</span><span class="nx">valueHasMutated</span><span class="p">();</span>
+    <span class="p">};</span>
+
+    <span class="c1">// functions stolen from WorkBetter for card data calculations</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">getPhoto</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">empId</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">src</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">empId</span> <span class="o">&lt;</span> <span class="mi">188</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">src</span> <span class="o">=</span> <span class="s1">&#39;css/images/people/&#39;</span> <span class="o">+</span> <span class="nx">empId</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="nx">src</span> <span class="o">=</span> <span class="s1">&#39;css/images/people/nopic.png&#39;</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">src</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="nx">self</span><span class="p">.</span><span class="nx">getTenure</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">emp</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getFullYear</span><span class="p">();</span>
+      <span class="kd">var</span> <span class="nx">hired</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">emp</span><span class="p">.</span><span class="nx">hireDate</span><span class="p">).</span><span class="nx">getFullYear</span><span class="p">();</span>
+      <span class="kd">var</span> <span class="nx">diff</span> <span class="o">=</span> <span class="nx">now</span> <span class="o">-</span> <span class="nx">hired</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">diff</span><span class="p">;</span>
+    <span class="p">};</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">cardContentViewModel</span><span class="p">;</span>
+<span class="p">});</span></code></pre></div>
+
+<p>This looks like a normal viewModel but for a few differences. One is that we’re expecting a <code>$params</code> parameter when our viewModel function is called. This will be the current record from the <code>allPeople</code> array when the parent calls our ojModule. We immediately assign <code>$params</code> to a local viewModel variable (<code>self.cardData</code>) so that we can access it via normal data binding in the view.</p>
+
+<p>But again: because JavaScript is passing in a copy of the pointer to the object that was this iteration of the <code>allPeople</code> array, then if we modify the data it will be changing the same object that the parent owns. This means we can make a change to the state of the object here in the submodule, but use that same data up in the parent module.</p>
+
+<p>That’s what we do when we add an <code>isSelected</code> member to the data object. This is a locally-maintained flag that holds the ‘has it been clicked’ status for this card. The selected status is toggled by the <code>toggleSelected()</code> function.</p>
+
+<p>But that toggle function takes a parameter of its own: the <code>$parents</code> binding from the card view. We need this in order to reach up to the parent’s <code>allPeople</code> observable array and tell it that we’ve mutated the values of its members, otherwise the computed observable <code>computedCount</code> will never fire. Why not? </p>
+
+<p>Because we’re not really modifying the observable array <code>allPeople</code>…we’re modifying a member of that array. The array still has the same number of items and thus the array itself doesn’t seem changed, especially to the parent viewModel. We’ve only modified one of the members of one of the array’s items, and so the computedObservable subscription never fires. But we can wake it up by explicitly telling it to recalculate by means of the <code>$parents[1].allPeople.valueHasMutated();</code> call.</p>
+
+<p>(aside:  We’ve been calling it the “parent” viewModel, so why do we need to reach up to the <em>grand</em>parent with <code>$parents[1]</code> instead of the parent with <code>$parents[0]</code>?  It’s because of the <code>foreach</code> in the parent module’s view: it introduces another layer when it iterates over the array before calling our submodule.)</p>
+
+<h2 id="taking-it-for-a-spin">Taking it for a spin</h2>
+<p>With all the pieces now in place we can show data added and modifed in the submodule yet also accessible from the parent viewModel. </p>
+
+<p>When we click on a card, it locally toggles its selected state and the green “is selected” text is revealed. Meanwhile up at the parent the computed observable fires and the parent counts up how many array items are in isSelected state and displays that number via a binding in the parent’s view.</p>
+
+<div class="full zoomable"><img src="/images/20160225/clicking_isSelected.gif" /></div>
+
+<p>With this same <code>params</code> passing technique, a single data object could be passed around to multiple modules in a view, all of them modifying the same object in memory. </p>
+
+            
+            <div class="tags">
+<a href="/tag/Oracle JET">Oracle JET</a>
+<a href="/tag/JavaScript">JavaScript</a>
+<a href="/tag/Dev">Dev</a></div>
+
+        
+            
+
+            
+<div class="social">
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"  data-text="Passing Data into ojModules" data-related="pthaden">Tweet</a>
+    </div>
+    
+    
+    <div>
+        <div class="fb-like" data-width="150" data-layout="button_count" data-action="like" data-show-faces="true" data-send="false"></div>
+    </div>
+    
+    
+    <div>
+        <div class="g-plusone" data-size="medium"></div>
+    </div>
+    
+    
+    
+    <div>
+        <a href="http://news.ycombinator.com/submit" class="hn-share-button">Vote on HN</a>
+    </div>
+    
+</div>
+
+
+            <div id="post-nav" class="clearfix">
+                 
+                    <a class="previous-post" href="/2016/01/23/modules-are-your-friends/">&laquo; Modules are Your Friends</a> 
+                 
+                 
+                    <a class="next-post" href="/2016/04/18/decoding-jets-grunt-scripts/">Decoding JET's Grunt Scripts &raquo;</a> 
+                 
+            </div>
+
+        </section>
+
+        <footer>
+            <address>
+               <img src="/images/Avatar.png">
+                <p>Written by <strong><a rel="author" href="https://twitter.com/pthaden" title="" target="_blank">Paul Thaden</a></strong><br>
+                <span class="muted">Dad to twin boys and twin girls; Retooling in my 40s around front-end dev and JavaScript; Oracle CX Apps Sales Consultant; all-around guy</span>
+                </p>
+            </address>
+
+        </footer>
+
+
+        
+        <section>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'likeahouseafire'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+        </section>
+        
+    </div>
+
+</article>
+
+
+<footer class="site-footer">
+    <div class="container">
+        &copy; 2018 
+        
+        <nav>
+            <a href="http://likeahouseafire.com/">Like A House Afire</a> &middot;
+            <a href="/">Blog</a> &middot;
+            
+            <a href="/about/">About</a>
+        </nav>
+        
+        <nav class="social">
+            
+            <a href="https://twitter.com/pthaden" title="Follow on Twitter" target="_blank"><i class="icon icon-twitter black"></i></a>
+            
+                
+            <a href="/feed.xml" title="RSS Feed">
+                <i class="icon icon-rss black"></i>
+            </a>
+        </nav>
+        <p>Incorporated theme by <a href="https://sendtoinc.com">Inc</a></p>
+    </div>
+</footer>
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="/assets/main.js"></script>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=253595308025739";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+<script>
+    (function(d, t) {
+        var g = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        g.src = '//hnbutton.appspot.com/static/hn.min.js';
+        s.parentNode.insertBefore(g, s);
+    }(document, 'script'));
+</script>
+
+  <!--google analytics tracking code here-->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45292037-1', 'likeahouseafire.com');
+  ga('send', 'pageview');
+
+</script>
+
+
+
+</body>
+</html>
